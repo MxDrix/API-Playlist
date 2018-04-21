@@ -7,9 +7,9 @@ var app = express();
  
 var myRouter = express.Router(); 
  
-myRouter.route('/piscines/:piscine_id')
+myRouter.route('/recherche/:id_api&:theme')
 .get(function(req,res){ 
-	  res.json({message : "Vous souhaitez accéder aux informations de la piscine n°" + req.params.piscine_id});
+	  res.json({message : "Vous souhaitez accéder aux informations de la piscine n°" + req.params.id_api+" "+ req.params.theme});
 })
 .put(function(req,res){ 
 	  res.json({message : "Vous souhaitez modifier les informations de la piscine n°" + req.params.piscine_id});
