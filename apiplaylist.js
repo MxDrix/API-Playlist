@@ -11,6 +11,14 @@ const API_TOKEN = "bf22a3d841794ffaa63f903613dd928a"
 
 const NewsAPI = require('newsapi');
 const newsapi = new NewsAPI('bf22a3d841794ffaa63f903613dd928a');
+
+var twitterAPI = require('node-twitter-api');
+var twitter = new twitterAPI({
+    consumerKey: '3xTy6ZriSI2HufxA12YpiWfc1',
+    consumerSecret: 'Dayescyt7tnCnDP8xYYDAhRoymDct6sdbwYKe8qLWmeiOQ5cf5'
+});
+
+
 // categories : business entertainment general health science sports technology
 myRouter.route('/simple-recherche/:q&:filtre')
 .get(function(req,res){ 
@@ -21,6 +29,14 @@ myRouter.route('/simple-recherche/:q&:filtre')
             sortBy: 'relevancy'
         }).then(response => {
             console.log(response);
+	        res.json({message : ""+ JSON.stringify(response)});
+        });
+        twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
+            if (error) {
+                console.log("Error getting Auth request token : " + JSON.stringify(error));
+            } else {
+                res.json({message : "test"});
+            }
         });
     }
 })

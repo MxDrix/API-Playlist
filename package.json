@@ -8,6 +8,7 @@
     "http": "0.0.0",
     "https": "^1.0.0",
     "newsapi": "^2.2.2",
+    "node-twitter-api": "^1.8.0",
     "nodejs": "^0.0.0",
     "request": "^2.85.0"
   },
