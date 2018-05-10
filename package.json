@@ -9,6 +9,7 @@
     "https": "^1.0.0",
     "mongodb": "^3.0.7",
     "mongodb-stitch": "^3.1.2",
+    "mongoose": "^5.0.18",
     "newsapi": "^2.2.2",
     "node-twitter-api": "^1.8.0",
     "nodejs": "^0.0.0",

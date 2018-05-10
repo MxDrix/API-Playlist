@@ -1,1 +1,0 @@
-// Model schéma mongoose
