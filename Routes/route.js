@@ -35,22 +35,13 @@ usersRoute.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement
     });    
     usersRoute.route('/update/:email&:nom&:prenom&:pseudo&:password&:abonnement')
     .put((req, res) => {
-        var query = { email: req.params.email};
-        collection.findOneAndUpdate(query, { $set: {  
+        Users.update({email: req.params.email,
             nom: req.params.nom,
             prenom: req.params.prenom,
             pseudo: req.params.pseudo,
             password: req.params.password,
-            abonnement: req.params.abonnement   
-        }}, {returnOriginal: false}, function(err, doc){
-            if(err){
-                console.log("Something wrong when updating data!");
-            }
-            if(doc){
-                res.status(200).send(doc);
-            }
-        });
-    })
+            abonnement: req.params.abonnement});
+    });
     usersRoute.route('/delete/:email')
     .delete((req, res) => {
         try {
