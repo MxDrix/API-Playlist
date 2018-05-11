@@ -146,14 +146,14 @@ var usersRoute = require('./Routes/route');
 const app = express();
 const port = process.env.PORT || 5656;
 // Connecting to the database
-const db = mongoose.connect("mongodb://localhost:27017/local");
+const db = mongoose.connect("mongodb://localhost:27017/utilisateur");
 
 // setting body parser middleware 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
-app.use('/user', usersRoute);
+app.use('/api', usersRoute);
 
 // Running the server
 app.listen(port, () => {
