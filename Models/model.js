@@ -14,7 +14,7 @@ const Users = new Schema({
 });
 
 const Categories = new Schema({
-	id: { type: String, default: [ "business", "entertainment", "health", "science", "sports", "technology"] }
+	id: { type: [String], default: [ "business", "entertainment", "health", "science", "sports", "technology"] }
 })
 
 const Sources = new Schema({
@@ -37,7 +37,7 @@ const Playlists = new Schema({
 	content: [
 		{
 			Categories: {
-				id: String
+				id: { type: [String], default: [ "business", "entertainment", "health", "science", "sports", "technology"] }
 			},
 			Sources: {
 				id: String,
