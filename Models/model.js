@@ -5,16 +5,20 @@ var collection = conn.collection('users');
 const Schema = mongoose.Schema; 
 
 const Users = new Schema({
+	_id: Schema.ObjectId,
 	nom: { type: String },
 	prenom: { type: String },
 	pseudo: { type: String },
 	email: { type: String },
 	password: { type: String },
-	abonnement: { type: String }
+	dateinscription: {type: Date},
+	abonnement: { type: String },
+	lang: {type: String},
+	fil_actu: [{value: String}]
 });
 
 const Categories = new Schema({
-	id: { type: [String], default: [ "business", "entertainment", "health", "science", "sports", "technology"] }
+	id: { type: [String], default: ["business", "entertainment", "health", "science", "sports", "technology"] }
 })
 
 const Sources = new Schema({
@@ -53,9 +57,19 @@ const Playlists = new Schema({
 	]
 })
 
-Users.method('insertOne', function(user) {
-    collection.insert(user);
-    return user; 
+Users.method('insertOne', function(user, fil_actu) {
+	collection.insert(user);
+	let array_of_fil_actu = fil_actu.split(",");
+	collection.findOneAndUpdate(
+		{ email: user.email }, 
+		{ $push: { fil_actu: array_of_fil_actu  } },
+	   function (error, success) {
+			 if (error) {
+				 console.log(error);
+			 } else {
+				return user; 
+			 }
+		 });
 });
   
 module.exports =  mongoose.model('Users', Users)

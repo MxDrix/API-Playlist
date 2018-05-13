@@ -2,35 +2,79 @@
 var express = require('express'); 
 var mongoose = require('mongoose');
 var Users = require('../Models/model');
+const NewsAPI = require('newsapi');
+const newsapi = new NewsAPI('bf22a3d841794ffaa63f903613dd928a');
 var conn = mongoose.connection;
 var collection = conn.collection('users');
 const usersRoute = express.Router();
+var now = new Date();
+var day = ("0" + now.getDate()).slice(-2);
+var month = ("0" + (now.getMonth() + 1)).slice(-2);
+var today = now.getFullYear() + "-" + (month) + "-" + (day);
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
-// email unique
-usersRoute.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement')
+// email unique / pseudo
+usersRoute.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement&:lang&:fil_actu')
     .post((req, res) => {
-        let user = new Users({nom: req.params.nom,prenom: req.params.prenom,pseudo: req.params.pseudo,email: req.params.email,password: req.params.password,abonnement: req.params.abonnement});
+        let user = new Users({nom: req.params.nom,prenom: req.params.prenom,pseudo: req.params.pseudo,email: req.params.email,password: req.params.password,dateinscription: today,abonnement: req.params.abonnement,lang: req.params.lang});
         // user.save();
         var query  = Users.where({email :req.params.email});
         query.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
                 res.status(400).json({ error: "This user email already existe"});
-            }else{         
-                collection.insertOne(user);
-                res.status(201).json({ Resultat: "New user create"}); 
+            }else{      
+                var query  = Users.where({pseudo :req.params.pseudo});
+                query.findOne(function (err, result) {
+                    if (err) return handleError(err);
+                    if (result) {
+                        res.status(400).json({ error: "This user pseudo already existe"});
+                    }else{         
+                        // collection.insertOne(user,req.params.fil_actu);
+                        collection.insert(user);
+                        let array_of_fil_actu = req.params.fil_actu.split(",");
+                        collection.findOneAndUpdate(
+                            { email: user.email }, 
+                            { $push: { fil_actu: array_of_fil_actu  } },
+                            function (error, success) {
+                                if (error) {
+                                    console.log(error);
+                                } else {
+                                    res.status(201).json({ Resultat: "New user create"}); 
+                                }
+                            }
+                        );
+                    }   
+                });
             }
         });
     });
 // Connexion with pseudo and password
-usersRoute.route('/connexion/:pseudo&:password')
+usersRoute.route('/connexion/:email&:password')
     .get((req, res) => {
-        var query  = Users.where({pseudo :req.params.pseudo,password:req.params.password});
+        var query  = Users.where({email :req.params.email,password:req.params.password});
         query.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
-                res.status(200).json({ Resultat: result});
+                console.log(result.fil_actu.length+" "+result.lang);
+                let allResponse; 
+                // result.fil_actu.forEach(function(element) {
+                    // console.log(element);
+                        res.setHeader('Content-Type', 'application/json');
+                        newsapi.v2.topHeadlines({
+                            category: result.fil_actu[0],
+                            country: result.lang  
+                        }).then(response => { 
+                            newsapi.v2.topHeadlines({
+                                category: result.fil_actu[1],
+                                country: result.lang  
+                            }).then(responsetwo => { 
+                                res.status(200).json({ all:{Users: result,News: response.articles,News2: responsetwo.articles} });
+                            });
+                            // res.status(200).json({ all:{Users: result,News: response} });
+                        });
+                        
+                //   });
             }else{
                 res.status(400).json({ error: "Incorrect pseudo or password"});
             }
