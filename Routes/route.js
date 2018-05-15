@@ -1,12 +1,13 @@
-
 var express = require('express'); 
 var mongoose = require('mongoose');
 var Users = require('../Models/model');
+var Playlists = require('../Models/playlist_model');
 const NewsAPI = require('newsapi');
 const newsapi = new NewsAPI('bf22a3d841794ffaa63f903613dd928a');
 var conn = mongoose.connection;
 var collection = conn.collection('users');
-const usersRoute = express.Router();
+var collectionOfPlaylists = conn.collection('playlists');
+const app = express.Router();
 var now = new Date();
 var day = ("0" + now.getDate()).slice(-2);
 var month = ("0" + (now.getMonth() + 1)).slice(-2);
@@ -14,7 +15,7 @@ var today = now.getFullYear() + "-" + (month) + "-" + (day);
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
-usersRoute.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement&:lang&:fil_actu')
+app.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement&:lang&:fil_actu')
     .post((req, res) => {
         let user = new Users({nom: req.params.nom,prenom: req.params.prenom,pseudo: req.params.pseudo,email: req.params.email,password: req.params.password,dateinscription: today,abonnement: req.params.abonnement,lang: req.params.lang});
         // user.save();
@@ -23,13 +24,13 @@ usersRoute.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement
             if (err) return handleError(err);
             if (result) {
                 res.status(400).json({ error: "This user email already existe"});
-            }else{      
+            } else {      
                 var query  = Users.where({pseudo :req.params.pseudo});
                 query.findOne(function (err, result) {
                     if (err) return handleError(err);
                     if (result) {
                         res.status(400).json({ error: "This user pseudo already existe"});
-                    }else{         
+                    } else {         
                         // collection.insertOne(user,req.params.fil_actu);
                         collection.insert(user);
                         let array_of_fil_actu = req.params.fil_actu.split(",");
@@ -49,8 +50,9 @@ usersRoute.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement
             }
         });
     });
+
 // Connexion with pseudo and password
-usersRoute.route('/connexion/:email&:password')
+app.route('/connexion/:email&:password')
     .get((req, res) => {
         var query  = Users.where({email :req.params.email,password:req.params.password});
         query.findOne(function (err, result) {
@@ -79,9 +81,10 @@ usersRoute.route('/connexion/:email&:password')
                 res.status(400).json({ error: "Incorrect pseudo or password"});
             }
         });        
-    });    
+    });
+
 // Update user by email
-usersRoute.route('/update/:email&:nom&:prenom&:pseudo&:password&:abonnement')
+app.route('/update/:email&:nom&:prenom&:pseudo&:password&:abonnement')
     .put((req, res) => {
         var query = { email: req.params.email};
         collection.findOneAndUpdate(query, { $set: {  
@@ -99,8 +102,9 @@ usersRoute.route('/update/:email&:nom&:prenom&:pseudo&:password&:abonnement')
             }
         });
     })
+
 // Delete user by email 
-usersRoute.route('/delete/:email')
+app.route('/delete/:email')
     .delete((req, res) => {
         try {
             var query = { email: req.params.email};
@@ -114,8 +118,9 @@ usersRoute.route('/delete/:email')
             res.status(400).json({error: e});
         }
     })
+
 // Get User by nom - prenom - pseudo - email
-usersRoute.route('/user/:user')
+app.route('/user/:user')
 .get((req, res) => {
     var query  = Users.where({nom :req.params.user});
     query.findOne(function (err, result) {
@@ -149,6 +154,52 @@ usersRoute.route('/user/:user')
                 }
             })
         }
-    });        
-})    
-module.exports = usersRoute;
+    });
+})
+
+// Créer une playlist
+app.route('/playlist/create/:id_playlist&:id_user&:nom&:categoriesContent&:celebritesContent&:motscleContent')
+    .post((req, res) => {
+        var playlist = new Playlists({ id_playlist: req.params.id_playlist, id_user: req.params.id_user, nom: req.params.nom, categoriesContent: req.params.categoriesContent, celebritesContent: req.params.celebritesContent, motscleContent: req.params.motscleContent})
+
+        var query = Playlists.where({id_playlist :req.params.id_playlist});
+
+        var array_categoriesContent = req.params.categoriesContent.split(",");
+        console.log('#####', array_categoriesContent);
+
+        query.findOne( function(err, result) {
+            if (err) return handleError(err);
+            if (result) {
+                res.status(400).json({ error: "This id playlist is already exist"});
+            } else {
+                collectionOfPlaylists.insert(playlist);
+                res.status(201).json({ Resultat: "New playlist create"}); 
+            }
+        })
+    })
+
+// Chercher une playlist à l'aide de l'id_playlist
+app.route('/playlist/search/:id_playlist&:id_user&:nom&:categoriesContent&:celebritesContent&:motscleContent')
+    .get((req, res) => {
+        var list_categoriesContent = req.params.categoriesContent.split(",");
+        var list_celebritesContent = req.params.celebritesContent.split(",");
+    })
+
+// Supprimer une playlist à l'aide de l'id_playlist
+app.route('/playlist/delete/:id_playlist')
+    .delete((req, res) => {
+        try {
+            var query = { id_playlist: req.params.id_playlist};
+            
+            collectionOfPlaylists.findOneAndDelete(query, function(err) {
+                if (err) return res.status(500).json({ error: err});  
+
+                res.status(200).json({ Resultat: "Playlist id : " + req.params.id_playlist + " is deleted"});
+            });
+        }
+        catch(e){
+            res.status(400).json({error: e});
+        }
+    })
+
+module.exports = app;
