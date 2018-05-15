@@ -50,9 +50,11 @@ usersRoute.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement
         });
     });
 // Connexion with pseudo and password
-usersRoute.route('/connexion/:email&:password')
+usersRoute.route('/connexion')
     .get((req, res) => {
-        var query  = Users.where({email :req.params.email,password:req.params.password});
+        let email = req.param("email");
+        let password = req.param("password");        
+        var query  = Users.where({email :email,password:password});
         query.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
