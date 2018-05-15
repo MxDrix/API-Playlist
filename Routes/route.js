@@ -164,8 +164,31 @@ app.route('/playlist/create/:id_playlist&:id_user&:nom&:categoriesContent&:celeb
 
         var query = Playlists.where({id_playlist :req.params.id_playlist});
 
-        var array_categoriesContent = req.params.categoriesContent.split(",");
-        console.log('#####', array_categoriesContent);
+        var object_content = {
+            Categories: [],
+            Celebrites: [],
+            MotsCle: []
+        };
+
+        var list_categoriesContent = req.params.categoriesContent.split(",");
+        var list_celebritesContent = req.params.celebritesContent.split(",");
+        var list_motsCleContent = req.params.motscleContent.split(",");
+
+        for(var i = 0; i < list_categoriesContent.length; i++) {
+            object_content.Categories[i] = list_categoriesContent[i];
+        }
+
+        for(var i = 0; i < list_celebritesContent.length; i++) {
+            object_content.Celebrites[i] = list_celebritesContent[i];
+        }
+
+        for(var i = 0; i < list_motsCleContent.length; i++) {
+            if (list_motsCleContent.length <= 1) {
+                object_content.MotsCle[0] = list_motsCleContent[0];
+            } else {
+                object_content.MotsCle[i] = list_motsCleContent[i];
+            }
+        }
 
         query.findOne( function(err, result) {
             if (err) return handleError(err);
@@ -173,7 +196,17 @@ app.route('/playlist/create/:id_playlist&:id_user&:nom&:categoriesContent&:celeb
                 res.status(400).json({ error: "This id playlist is already exist"});
             } else {
                 collectionOfPlaylists.insert(playlist);
-                res.status(201).json({ Resultat: "New playlist create"}); 
+                collectionOfPlaylists.findOneAndUpdate(
+                    { id_playlist: playlist.id_playlist },
+                    { $push: { content: object_content } },
+                    function (error, success) {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            res.status(201).json({ Resultat: "New Playlist : " + playlist.nom + " is created"}); 
+                        }
+                    }
+                )
             }
         })
     })
@@ -181,8 +214,32 @@ app.route('/playlist/create/:id_playlist&:id_user&:nom&:categoriesContent&:celeb
 // Chercher une playlist à l'aide de l'id_playlist
 app.route('/playlist/search/:id_playlist&:id_user&:nom&:categoriesContent&:celebritesContent&:motscleContent')
     .get((req, res) => {
+        var array_content = [];
+        var object_content = {
+            Categories: [],
+            Celebrites: [],
+            MotsCle: []
+        };
+
         var list_categoriesContent = req.params.categoriesContent.split(",");
         var list_celebritesContent = req.params.celebritesContent.split(",");
+        var list_motsCleContent = req.params.motscleContent.split(",");
+
+        for(var i = 0; i < list_categoriesContent.length; i++) {
+            object_content.Categories[i] = list_categoriesContent[i];
+        }
+
+        for(var i = 0; i < list_celebritesContent.length; i++) {
+            object_content.Celebrites[i] = list_celebritesContent[i];
+        }
+
+        for(var i = 0; i < list_categoriesContent.length; i++) {
+            object_content.MotsCle[i] = list_motsCleContent[i];
+        }
+
+        array_content.push(object_content);
+        console.log('####### ', array_content);
+
     })
 
 // Supprimer une playlist à l'aide de l'id_playlist

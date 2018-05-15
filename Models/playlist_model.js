@@ -10,14 +10,14 @@ const Playlists = new Schema({
 	nom: String,
 	content: [
 		{
-			Categories: {
+			Categories:	{
 				id: { type: [String], default: [ "business", "entertainment", "health", "science", "sports", "technology"] }
 			},
 			Celebrites: {
-				nom: String
+				nom: [String]
 			},
 			MotsCle: {
-				libelle: String
+				libelle: [String]
 			}
 		}
 	]
