@@ -15,17 +15,26 @@ var today = now.getFullYear() + "-" + (month) + "-" + (day);
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
-app.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement&:lang&:fil_actu')
+app.route('/inscription')
     .post((req, res) => {
-        let user = new Users({nom: req.params.nom,prenom: req.params.prenom,pseudo: req.params.pseudo,email: req.params.email,password: req.params.password,dateinscription: today,abonnement: req.params.abonnement,lang: req.params.lang});
+        let nom = req.query["nom"];
+        let prenom = req.query["prenom"];  
+        let pseudo = req.query["pseudo"];
+        let password = req.query["password"];  
+        let email = req.query["email"];
+        let abonnement = req.query["abonnement"];  
+        let lang = req.query["lang"];
+        let fil_actu = req.query["fil_actu"]; 
+        
+        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: password,dateinscription: today,abonnement: abonnement,lang: lang});
         // user.save();
-        var query  = Users.where({email :req.params.email});
+        var query  = Users.where({email :email});
         query.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
                 res.status(400).json({ error: "This user email already existe"});
             } else {      
-                var query  = Users.where({pseudo :req.params.pseudo});
+                var query  = Users.where({pseudo : pseudo});
                 query.findOne(function (err, result) {
                     if (err) return handleError(err);
                     if (result) {
@@ -33,7 +42,7 @@ app.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement&:lang&
                     } else {         
                         // collection.insertOne(user,req.params.fil_actu);
                         collection.insert(user);
-                        let array_of_fil_actu = req.params.fil_actu.split(",");
+                        let array_of_fil_actu = fil_actu.split(",");
                         collection.findOneAndUpdate(
                             { email: user.email }, 
                             { $push: { fil_actu: array_of_fil_actu  } },
@@ -52,9 +61,11 @@ app.route('/inscription/:nom&:prenom&:pseudo&:email&:password&:abonnement&:lang&
     });
 
 // Connexion with pseudo and password
-app.route('/connexion/:email&:password')
+app.route('/connexion')
     .get((req, res) => {
-        var query  = Users.where({email :req.params.email,password:req.params.password});
+        let email = req.query["email"];
+        let password = req.query["password"];        
+        var query  = Users.where({email :email,password:password});
         query.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
@@ -84,15 +95,22 @@ app.route('/connexion/:email&:password')
     });
 
 // Update user by email
-app.route('/update/:email&:nom&:prenom&:pseudo&:password&:abonnement')
+app.route('/update')
     .put((req, res) => {
-        var query = { email: req.params.email};
+        let nom = req.query["nom"];
+        let prenom = req.query["prenom"];  
+        let pseudo = req.query["pseudo"];
+        let password = req.query["password"];  
+        let email = req.query["email"];
+        let abonnement = req.query["abonnement"];  
+
+        var query = { email: email};
         collection.findOneAndUpdate(query, { $set: {  
-            nom: req.params.nom,
-            prenom: req.params.prenom,
-            pseudo: req.params.pseudo,
-            password: req.params.password,
-            abonnement: req.params.abonnement   
+            nom: nom,
+            prenom: prenom,
+            pseudo: pseudo,
+            password: password,
+            abonnement: abonnement   
         }}, {returnOriginal: false}, function(err, doc){
             if(err){
                 res.status(200).json({ error: "Something wrong when updating data!"});
@@ -104,10 +122,11 @@ app.route('/update/:email&:nom&:prenom&:pseudo&:password&:abonnement')
     })
 
 // Delete user by email 
-app.route('/delete/:email')
+app.route('/delete')
     .delete((req, res) => {
-        try {
-            var query = { email: req.params.email};
+        try {  
+            let email = req.query["email"];
+            var query = { email: email};
             // Users.deleteOne(query)
             collection.findOneAndDelete(query, function(err) {                
                 if (err) return res.status(500).json({ error: err});                
@@ -120,27 +139,28 @@ app.route('/delete/:email')
     })
 
 // Get User by nom - prenom - pseudo - email
-app.route('/user/:user')
+app.route('/user')
 .get((req, res) => {
-    var query  = Users.where({nom :req.params.user});
+    let user = req.query["user"];
+    var query  = Users.where({nom : user});
     query.findOne(function (err, result) {
         if (err) return handleError(err);
         if (result) {
             res.status(200).json({nom: result});
         }else{
-            query  = Users.where({prenom :req.params.user});
+            query  = Users.where({prenom : user});
             query.findOne(function (err, result) {
                 if (err) return handleError(err);
                 if (result) {
                     res.status(200).json({prenom: result});
                 }else{
-                    query  = Users.where({pseudo :req.params.user});
+                    query  = Users.where({pseudo : user});
                     query.findOne(function (err, result) {
                         if (err) return handleError(err);
                         if (result) {
                             res.status(200).json({pseudo: result});
                         }else{
-                            query  = Users.where({email :req.params.user});
+                            query  = Users.where({email : user});
                             query.findOne(function (err, result) {
                                 if (err) return handleError(err);
                                 if (result) {
