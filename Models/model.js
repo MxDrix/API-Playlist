@@ -34,28 +34,7 @@ const MotsCle = new Schema({
 	libelle: String
 })
 
-const Playlists = new Schema({
-	id_playlist: Number,
-	id_user: Number,
-	nom: String,
-	content: [
-		{
-			Categories: {
-				id: { type: [String], default: [ "business", "entertainment", "health", "science", "sports", "technology"] }
-			},
-			Sources: {
-				id: String,
-				nom: String
-			},
-			Celebrites: {
-				nom: String
-			},
-			MotsCle: {
-				libelle: String
-			}
-		}
-	]
-})
+
 
 Users.method('insertOne', function(user, fil_actu) {
 	collection.insert(user);
