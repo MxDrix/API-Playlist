@@ -139,27 +139,28 @@ app.route('/delete')
     })
 
 // Get User by nom - prenom - pseudo - email
-app.route('/user/:user')
+app.route('/user')
 .get((req, res) => {
-    var query  = Users.where({nom :req.params.user});
+    let user = req.query["user"];
+    var query  = Users.where({nom : user});
     query.findOne(function (err, result) {
         if (err) return handleError(err);
         if (result) {
             res.status(200).json({nom: result});
         }else{
-            query  = Users.where({prenom :req.params.user});
+            query  = Users.where({prenom : user});
             query.findOne(function (err, result) {
                 if (err) return handleError(err);
                 if (result) {
                     res.status(200).json({prenom: result});
                 }else{
-                    query  = Users.where({pseudo :req.params.user});
+                    query  = Users.where({pseudo : user});
                     query.findOne(function (err, result) {
                         if (err) return handleError(err);
                         if (result) {
                             res.status(200).json({pseudo: result});
                         }else{
-                            query  = Users.where({email :req.params.user});
+                            query  = Users.where({email : user});
                             query.findOne(function (err, result) {
                                 if (err) return handleError(err);
                                 if (result) {
