@@ -178,11 +178,9 @@ app.route('/user')
 })
 
 // Créer une playlist
-app.route('/playlist/create/:id_playlist&:id_user&:nom&:categoriesContent&:celebritesContent&:motscleContent')
+// Ex : http://localhost:5656/api/playlist/create?motsCleContent=tesla,psg,info&id_playlist=32&id_user=4&celebritesContent=ElonMusk,ChrisBrown,Neymar&nom=MyPlaylist&categoriesContent=Sports
+app.route('/playlist/create')
     .post((req, res) => {
-        var playlist = new Playlists({ id_playlist: req.params.id_playlist, id_user: req.params.id_user, nom: req.params.nom, categoriesContent: req.params.categoriesContent, celebritesContent: req.params.celebritesContent, motscleContent: req.params.motscleContent})
-
-        var query = Playlists.where({id_playlist :req.params.id_playlist});
 
         var object_content = {
             Categories: [],
@@ -190,25 +188,24 @@ app.route('/playlist/create/:id_playlist&:id_user&:nom&:categoriesContent&:celeb
             MotsCle: []
         };
 
-        var list_categoriesContent = req.params.categoriesContent.split(",");
-        var list_celebritesContent = req.params.celebritesContent.split(",");
-        var list_motsCleContent = req.params.motscleContent.split(",");
+        let id_playlist = req.query["id_playlist"];
+        let id_user = req.query["id_user"];
+        let nom = req.query["nom"];
+        let categoriesContent = req.query["categoriesContent"];
+        let celebritesContent = req.query["celebritesContent"];
+        let motsCleContent = req.query["motsCleContent"];
 
-        for(var i = 0; i < list_categoriesContent.length; i++) {
-            object_content.Categories[i] = list_categoriesContent[i];
-        }
+        var playlist = new Playlists({ id_playlist: id_playlist, id_user: id_user, nom: nom, categoriesContent: categoriesContent, celebritesContent: celebritesContent, motsCleContent: motsCleContent})
 
-        for(var i = 0; i < list_celebritesContent.length; i++) {
-            object_content.Celebrites[i] = list_celebritesContent[i];
-        }
+        var query = Playlists.where({id_playlist :id_playlist});
 
-        for(var i = 0; i < list_motsCleContent.length; i++) {
-            if (list_motsCleContent.length <= 1) {
-                object_content.MotsCle[0] = list_motsCleContent[0];
-            } else {
-                object_content.MotsCle[i] = list_motsCleContent[i];
-            }
-        }
+        var list_categoriesContent = categoriesContent.split(",");
+        var list_celebritesContent = celebritesContent.split(",");
+        var list_motsCleContent = motsCleContent.split(","); 
+
+        object_content.Categories = list_categoriesContent;
+        object_content.Celebrites = list_celebritesContent;
+        object_content.MotsCle = list_motsCleContent;
 
         query.findOne( function(err, result) {
             if (err) return handleError(err);
@@ -231,47 +228,88 @@ app.route('/playlist/create/:id_playlist&:id_user&:nom&:categoriesContent&:celeb
         })
     })
 
-// Chercher une playlist à l'aide de l'id_playlist
-app.route('/playlist/search/:id_playlist&:id_user&:nom&:categoriesContent&:celebritesContent&:motscleContent')
-    .get((req, res) => {
-        var array_content = [];
+// Update a playlist by id_playlist
+app.route('/playlist/update')
+    .put((req, res) => {
+
         var object_content = {
             Categories: [],
             Celebrites: [],
             MotsCle: []
         };
 
-        var list_categoriesContent = req.params.categoriesContent.split(",");
-        var list_celebritesContent = req.params.celebritesContent.split(",");
-        var list_motsCleContent = req.params.motscleContent.split(",");
+        let id_playlist = req.query["id_playlist"];
+        let nom = req.query["nom"];
+        let categoriesContent = req.query["categoriesContent"];
+        let celebritesContent = req.query["celebritesContent"];
+        let motsCleContent = req.query["motsCleContent"];
 
-        for(var i = 0; i < list_categoriesContent.length; i++) {
-            object_content.Categories[i] = list_categoriesContent[i];
-        }
+        var list_categoriesContent = categoriesContent.split(",");
+        var list_celebritesContent = celebritesContent.split(",");
+        var list_motsCleContent = motsCleContent.split(","); 
 
-        for(var i = 0; i < list_celebritesContent.length; i++) {
-            object_content.Celebrites[i] = list_celebritesContent[i];
-        }
+        object_content.Categories = list_categoriesContent;
+        object_content.Celebrites = list_celebritesContent;
+        object_content.MotsCle = list_motsCleContent;
 
-        for(var i = 0; i < list_categoriesContent.length; i++) {
-            object_content.MotsCle[i] = list_motsCleContent[i];
-        }
+        var query = { id_playlist: id_playlist};
 
-        array_content.push(object_content);
-        console.log('####### ', array_content);
-
+        collectionOfPlaylists.findOneAndUpdate(query, { $set: {  
+            nom: nom,
+            content: object_content,
+        }}, {returnOriginal: false}, function(err, doc){
+            if(err){
+                res.status(500).json({ error: "Something wrong when updating data!"});
+            }
+            if(doc){
+                res.status(200).json({ Resultat: doc});
+            }
+        });
     })
 
+// Chercher une playlist à l'aide de l'id_playlist et/ou du nom
+app.route('/playlist/search')
+    .get((req, res) => {
+
+        let id_playlist = req.query["id_playlist"] || "";
+        let nom = req.query["nom"] || "";
+
+        var query_id_playlist = Playlists.where({id_playlist : id_playlist})
+        var query_nom_playlist = Playlists.where({nom : nom})
+
+        query_id_playlist.findOne(function (err, result) {
+            if (err) return handleError(err);
+            if (result) {
+                res.status(200).json({id_playlist: result});
+            } else {
+                query_nom_playlist.findOne(function (err, result) {
+                    if (err) return handleError(err);
+                    if (result) {
+                        res.status(200).json({nom: result});
+                    } else {
+                        res.status(400).json({error: "No playlist found in database"});
+                    }
+                })
+            }
+        })
+    })
+
+
 // Supprimer une playlist à l'aide de l'id_playlist
-app.route('/playlist/delete/:id_playlist')
+app.route('/playlist/delete')
     .delete((req, res) => {
         try {
-            var query = { id_playlist: req.params.id_playlist};
+
+            let id_playlist = req.query["id_playlist"];
+            let nom = req.query["nom"];
+
+            var query_id_playlist = Playlists.where({ id_playlist: id_playlist});
+            var query_nom_playlist = Playlists.where({ nom: nom});
             
-            collectionOfPlaylists.findOneAndDelete(query, function(err) {
+            collectionOfPlaylists.findOneAndDelete(query_id_playlist, function(err) {
                 if (err) return res.status(500).json({ error: err});  
 
-                res.status(200).json({ Resultat: "Playlist id : " + req.params.id_playlist + " is deleted"});
+                res.status(200).json({ Resultat: "Playlist id : " + id_playlist + " is deleted"});
             });
         }
         catch(e){
