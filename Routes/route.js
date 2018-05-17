@@ -183,9 +183,15 @@ app.route('/playlist/create')
     .post((req, res) => {
 
         var object_content = {
-            Categories: [],
-            Celebrites: [],
-            MotsCle: []
+            Categories: {
+                id: []
+            },
+            Celebrites: {
+                nom: []
+            },
+            MotsCle: {
+                libelle: []
+            }
         };
 
         let id_playlist = req.query["id_playlist"];
@@ -203,9 +209,9 @@ app.route('/playlist/create')
         var list_celebritesContent = celebritesContent.split(",");
         var list_motsCleContent = motsCleContent.split(","); 
 
-        object_content.Categories = list_categoriesContent;
-        object_content.Celebrites = list_celebritesContent;
-        object_content.MotsCle = list_motsCleContent;
+        object_content.Categories.id = list_categoriesContent;
+        object_content.Celebrites.nom = list_celebritesContent;
+        object_content.MotsCle.libelle = list_motsCleContent;
 
         query.findOne( function(err, result) {
             if (err) return handleError(err);
@@ -232,32 +238,42 @@ app.route('/playlist/create')
 app.route('/playlist/update')
     .put((req, res) => {
 
+        var array_of_object = [];
         var object_content = {
-            Categories: [],
-            Celebrites: [],
-            MotsCle: []
+            Categories: {
+                id: []
+            },
+            Celebrites: {
+                nom: []
+            },
+            MotsCle: {
+                libelle: []
+            }
         };
 
+        let defaultCategories;
         let id_playlist = req.query["id_playlist"];
         let nom = req.query["nom"];
-        let categoriesContent = req.query["categoriesContent"];
+        let categoriesContent = req.query["categoriesContent"] || "business, entertainment, health, science, sports, technology";
         let celebritesContent = req.query["celebritesContent"];
         let motsCleContent = req.query["motsCleContent"];
 
         var list_categoriesContent = categoriesContent.split(",");
         var list_celebritesContent = celebritesContent.split(",");
-        var list_motsCleContent = motsCleContent.split(","); 
+        var list_motsCleContent = motsCleContent.split(",");
 
-        object_content.Categories = list_categoriesContent;
-        object_content.Celebrites = list_celebritesContent;
-        object_content.MotsCle = list_motsCleContent;
+        object_content.Categories.id = list_categoriesContent;
+        object_content.Celebrites.nom = list_celebritesContent;
+        object_content.MotsCle.libelle = list_motsCleContent;
 
-        var query = { id_playlist: id_playlist};
+        var query = { id_playlist: id_playlist };
 
-        collectionOfPlaylists.findOneAndUpdate(query, { $set: {  
+        array_of_object.push(object_content);
+
+        Playlists.findOneAndUpdate(query, { $set: {  
             nom: nom,
-            content: object_content,
-        }}, {returnOriginal: false}, function(err, doc){
+            content: array_of_object,
+        }}, {returnOriginal: false}, function(err, doc) {
             if(err){
                 res.status(500).json({ error: "Something wrong when updating data!"});
             }
@@ -299,18 +315,15 @@ app.route('/playlist/search')
 app.route('/playlist/delete')
     .delete((req, res) => {
         try {
-
             let id_playlist = req.query["id_playlist"];
-            let nom = req.query["nom"];
 
-            var query_id_playlist = Playlists.where({ id_playlist: id_playlist});
-            var query_nom_playlist = Playlists.where({ nom: nom});
+            var query_id_playlist = {id_playlist: id_playlist};
             
-            collectionOfPlaylists.findOneAndDelete(query_id_playlist, function(err) {
-                if (err) return res.status(500).json({ error: err});  
-
-                res.status(200).json({ Resultat: "Playlist id : " + id_playlist + " is deleted"});
+            Playlists.remove(query_id_playlist, function(err) {                
+                if (err) return res.status(500).json({ error: err});                
+                res.status(200).json({ Resultat: "Playlist " + id_playlist + " delete"});
             });
+
         }
         catch(e){
             res.status(400).json({error: e});
