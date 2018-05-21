@@ -1,5 +1,4 @@
 
-
 var express = require('express'); 
 var mongoose = require('mongoose'); 
 var News = require('./Models/news_model');
@@ -52,8 +51,15 @@ function getNEws(){
                 url:  element.url,
                 urlToImage:  element.urlToImage,
                 publishedAt:  element.publishedAt}
-            );     
-            collection.insert(NewsOne);
+            );                 
+            var query  = News.where({title:  element.title,url:  element.url});
+            query.findOne(function (err, result) {
+                if (err) return handleError(err);
+                if (result) {
+                } else {
+                    collection.insert(NewsOne);
+                }
+            });
         });   
         newsapi.v2.topHeadlines({
             category: 'entertainment',
@@ -69,8 +75,15 @@ function getNEws(){
                     url:  element.url,
                     urlToImage:  element.urlToImage,
                     publishedAt:  element.publishedAt}
-                );     
-                collection.insert(NewsTwo);
+                );               
+                var query  = News.where({title:  element.title,url:  element.url});
+                query.findOne(function (err, result) {
+                    if (err) return handleError(err);
+                    if (result) {
+                    } else {
+                        collection.insert(NewsTwo);
+                    }
+                });    
             });  
             newsapi.v2.topHeadlines({
                 category: 'general',
@@ -86,8 +99,15 @@ function getNEws(){
                         url:  element.url,
                         urlToImage:  element.urlToImage,
                         publishedAt:  element.publishedAt}
-                    );     
-                    collection.insert(NewsTree);
+                    );                 
+                    var query  = News.where({title:  element.title,url:  element.url});
+                    query.findOne(function (err, result) {
+                        if (err) return handleError(err);
+                        if (result) {
+                        } else {
+                            collection.insert(NewsTree);
+                        }
+                    });  
                 });  
                 newsapi.v2.topHeadlines({
                     category: 'health',
@@ -103,8 +123,15 @@ function getNEws(){
                             url:  element.url,
                             urlToImage:  element.urlToImage,
                             publishedAt:  element.publishedAt}
-                        );     
-                        collection.insert(NewsFour);
+                        );                 
+                        var query  = News.where({title:  element.title,url:  element.url});
+                        query.findOne(function (err, result) {
+                            if (err) return handleError(err);
+                            if (result) {
+                            } else {
+                                collection.insert(NewsFour);
+                            }
+                        });  
                     });  
                     newsapi.v2.topHeadlines({
                         category: 'science',
@@ -120,8 +147,15 @@ function getNEws(){
                                 url:  element.url,
                                 urlToImage:  element.urlToImage,
                                 publishedAt:  element.publishedAt}
-                            );     
-                            collection.insert(NewsFive); 
+                            );                 
+                            var query  = News.where({title:  element.title,url:  element.url});
+                            query.findOne(function (err, result) {
+                                if (err) return handleError(err);
+                                if (result) {
+                                } else {
+                                    collection.insert(NewsFive);
+                                }
+                            });  
                         });  
                         newsapi.v2.topHeadlines({
                             category: 'sports',
@@ -137,8 +171,15 @@ function getNEws(){
                                     url:  element.url,
                                     urlToImage:  element.urlToImage,
                                     publishedAt:  element.publishedAt}
-                                );     
-                                collection.insert(NewsSix);
+                                );                 
+                                var query  = News.where({title:  element.title,url:  element.url});
+                                query.findOne(function (err, result) {
+                                    if (err) return handleError(err);
+                                    if (result) {
+                                    } else {
+                                        collection.insert(NewsSix);
+                                    }
+                                });  
                             });  
                             newsapi.v2.topHeadlines({
                                 category: 'technology',
@@ -154,8 +195,15 @@ function getNEws(){
                                         url:  element.url,
                                         urlToImage:  element.urlToImage,
                                         publishedAt:  element.publishedAt}
-                                    );     
-                                    collection.insert(NewsSeven);
+                                    );                 
+                                    var query  = News.where({title:  element.title,url:  element.url});
+                                    query.findOne(function (err, result) {
+                                        if (err) return handleError(err);
+                                        if (result) {
+                                        } else {
+                                            collection.insert(NewsSeven);
+                                        }
+                                    });  
                                 });  
                                 // res.status(200).json({ 
                                 //     news :{

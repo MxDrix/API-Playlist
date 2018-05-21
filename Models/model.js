@@ -14,7 +14,7 @@ const Users = new Schema({
 	dateinscription: {type: Date},
 	abonnement: { type: String },
 	lang: {type: String},
-	fil_actu: [{value: String}]
+	fil_actu: []
 });
 
 const Categories = new Schema({

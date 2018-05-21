@@ -1,6 +1,7 @@
 var express = require('express'); 
 var mongoose = require('mongoose');
 var Users = require('../Models/model');
+var News = require('../Models/news_model');
 var Playlists = require('../Models/playlist_model');
 const NewsAPI = require('newsapi');
 const newsapi = new NewsAPI('bf22a3d841794ffaa63f903613dd928a');
@@ -70,24 +71,28 @@ app.route('/connexion')
             if (err) return handleError(err);
             if (result) {
                 console.log(result.fil_actu.length+" "+result.lang);
-                let allResponse; 
-                // result.fil_actu.forEach(function(element) {
-                    // console.log(element);
-                        res.setHeader('Content-Type', 'application/json');
-                        newsapi.v2.topHeadlines({
-                            category: result.fil_actu[0],
-                            country: result.lang  
-                        }).then(response => { 
-                            newsapi.v2.topHeadlines({
-                                category: result.fil_actu[1],
-                                country: result.lang  
-                            }).then(responsetwo => { 
-                                res.status(200).json({ all:{Users: result,News: response.articles,News2: responsetwo.articles} });
-                            });
-                            // res.status(200).json({ all:{Users: result,News: response} });
+                let allResponse= []; 
+                let allCategory = [];
+                let allNews = false;
+                console.log(result.fil_actu);
+                    for (let i = 0; i <result.fil_actu[0].length; i++){                            
+                        console.log(result.fil_actu[0][i]);
+                        let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
+                        cursor.on('data', function(doc) {
+                            allResponse.push(doc);
                         });
-                        
-                //   });
+                        cursor.on('close', function() {   
+                            if(i == result.fil_actu[0].length - 1){
+                                allResponse.sort();
+                                allResponse.sort(function(a, b){
+                                    return a.publishedAt - b.publishedAt;
+                                });
+                                res.setHeader('Cache-Control', 'public, max-age=31557600');
+                                res.setHeader('Content-Type', 'application/json');
+                                res.status(200).json({ all: {User: result, news: allResponse}});
+                            }
+                        });
+                    }
             }else{
                 res.status(400).json({ error: "Incorrect pseudo or password"});
             }
