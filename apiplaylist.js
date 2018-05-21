@@ -146,7 +146,7 @@ var usersRoute = require('./Routes/route');
 const app = express();
 const port = process.env.PORT || 5656;
 // Connecting to the database
-const db = mongoose.connect("mongodb://localhost:27017/utilisateur");
+const db = mongoose.connect("mongodb://bendo330:root@ds111420.mlab.com:11420/playlistveille");
 
 // setting body parser middleware 
 app.use(bodyParser.json());
