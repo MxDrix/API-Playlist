@@ -14,8 +14,18 @@ var day = ("0" + now.getDate()).slice(-2);
 var month = ("0" + (now.getMonth() + 1)).slice(-2);
 var today = now.getFullYear() + "-" + (month) + "-" + (day);
 
+var RateLimit = require('express-rate-limit');
+
+
+var createPlaylistLimiter = new RateLimit({
+	windowMs: 15*60*1000, // 15 minutes
+	max: 2, // limit each IP to 100 requests per windowMs
+	delayMs: 0 // disable delaying - full speed until the max limit is reached
+});
+
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
+// Ex : .../api/inscription?nom=ngoum&prenom=benjamin&pseudo=bendo&email=benj@gmail.com&password=azerty&abonnement=ElonMusk&lang=fr&fil_actu=business,sports
 app.route('/inscription')
     .post((req, res) => {
         let nom = req.query["nom"];
@@ -51,7 +61,7 @@ app.route('/inscription')
                                 if (error) {
                                     console.log(error);
                                 } else {
-                                    res.status(201).json({ Resultat: "New user create"}); 
+                                    res.status(201).json({ Resultat: "New user is created : " + user.nom + ' ' + user.prenom}); 
                                 }
                             }
                         );

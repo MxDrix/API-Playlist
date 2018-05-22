@@ -170,9 +170,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
 app.use('/api', usersRoute);
+app.post('/api/playlist/create', createPlaylistLimiter);
 
 app.get('/', function (req, res) {
-	res.send('Hello World!')
+	res.send('API Playlist Veille Informationnelle');
 })
 
 // Running the server

@@ -13,7 +13,7 @@ var collection = conn.collection('news');
 const app = express();
 const port = process.env.PORT || 5657;
 // Connecting to the database
-const db = mongoose.connect("mongodb://localhost:27017/utilisateur");
+const db = mongoose.connect("mongodb://ecvdigital:ecvdigital2018@ds111420.mlab.com:11420/playlistveille");
 
 // setting body parser middleware 
 app.use(bodyParser.json());
@@ -22,6 +22,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
 // app.use('/api', usersRoute);
+app.get('/', function (req, res) {
+	res.send('API Playlist Veille Informationnelle');
+})
 
 // Running the server
 app.listen(port, () => {

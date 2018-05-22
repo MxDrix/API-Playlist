@@ -1,1 +1,1 @@
-web: node apiplaylist.js
+web: npm start
