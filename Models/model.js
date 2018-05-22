@@ -12,7 +12,7 @@ const Users = new Schema({
 	email: { type: String },
 	password: { type: String },
 	dateinscription: {type: Date},
-	abonnement: { type: String },
+	abonnement: [],
 	lang: {type: String},
 	fil_actu: []
 });

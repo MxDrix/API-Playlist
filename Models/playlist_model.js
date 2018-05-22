@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 const Playlists = new Schema({
 	id_playlist: { type: Number },
-	id_user: { type: Number },
+	id_user: { type: String },
 	nom: { type: String },
 	content: [
 		{

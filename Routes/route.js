@@ -37,7 +37,7 @@ app.route('/inscription')
         let lang = req.query["lang"];
         let fil_actu = req.query["fil_actu"]; 
         
-        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: password,dateinscription: today,abonnement: abonnement,lang: lang});
+        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: password,dateinscription: today, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
@@ -54,9 +54,11 @@ app.route('/inscription')
                         // collection.insertOne(user,req.params.fil_actu);
                         collection.insert(user);
                         let array_of_fil_actu = fil_actu.split(",");
+                        let array_of_abonnement = abonnement.split(",");
+
                         collection.findOneAndUpdate(
                             { email: user.email }, 
-                            { $push: { fil_actu: array_of_fil_actu  } },
+                            { $push: { fil_actu: array_of_fil_actu, abonnement: array_of_abonnement } },
                             function (error, success) {
                                 if (error) {
                                     console.log(error);
@@ -80,30 +82,50 @@ app.route('/connexion')
         query.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
-                console.log(result.fil_actu.length+" "+result.lang);
                 let allResponse= []; 
                 let allCategory = [];
                 let allNews = false;
-                console.log(result.fil_actu);
-                    for (let i = 0; i <result.fil_actu[0].length; i++){                            
-                        console.log(result.fil_actu[0][i]);
-                        let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
-                        cursor.on('data', function(doc) {
-                            allResponse.push(doc);
-                        });
-                        cursor.on('close', function() {   
-                            if(i == result.fil_actu[0].length - 1){
-                                allResponse.sort();
-                                allResponse.sort(function(a, b){
-                                    return a.publishedAt - b.publishedAt;
-                                });
-                                res.setHeader('Cache-Control', 'public, max-age=31557600');
-                                res.setHeader('Content-Type', 'application/json');
-                                res.status(200).json({ all: {User: result, news: allResponse}});
-                            }
-                        });
-                    }
-            }else{
+                let allAbonnements = [];
+
+                for (var j = 0; j < result.abonnement[0].length; j++) {
+                    var queryAbonnement  = Users.where({pseudo :result.abonnement[0][j]});
+
+                    queryAbonnement.findOne(function (err, result) {
+                        if (err) return handleError(err);
+                        if (result) {
+                            
+                            var queryPseudoAbonnement = Playlists.where({id_user :result.pseudo});
+
+                            queryPseudoAbonnement.findOne(function (err, result) { 
+                                if (err) return handleError(err);
+                                if (result) { 
+                                    allAbonnements.push(result);
+                                }
+                            })
+                         }
+                    })
+                }
+
+                for (let i = 0; i <result.fil_actu[0].length; i++) {
+                    let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
+                    cursor.on('data', function(doc) {
+                        allResponse.push(doc);
+                    });
+                    cursor.on('close', function() {   
+                        if(i == result.fil_actu[0].length - 1){
+                            allResponse.sort();
+                            allResponse.sort(function(a, b){
+                                return a.publishedAt - b.publishedAt;
+                            });
+                            res.setHeader('Cache-Control', 'public, max-age=31557600');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.status(200).json({ all: {User: result, abo: allAbonnements, news: allResponse}});
+                            console.log('end json')
+                        }
+                    });
+                }
+
+            } else {
                 res.status(400).json({ error: "Incorrect pseudo or password"});
             }
         });        
