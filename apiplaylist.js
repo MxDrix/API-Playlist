@@ -146,7 +146,23 @@ var usersRoute = require('./Routes/route');
 const app = express();
 const port = process.env.PORT || 5656;
 // Connecting to the database
-const db = mongoose.connect("mongodb://bendo330:root@ds111420.mlab.com:11420/playlistveille");
+//const db = mongoose.connect("mongodb://bendo330:root@ds111420.mlab.com:11420/playlistveille");
+const Schema = mongoose.Schema;
+const http = require('http');
+
+const playlist = new Schema({
+	id_playlist: { type: Number }
+})
+
+let Team = mongoose.model('playlist', playlist);
+let db = mongoose.connection;
+let dbUrl = 'mongodb://bendo330:root@ds111420.mlab.com:11420/playlistveille';
+db.on('error', function () {console.log('error');});
+
+mongoose.connect(dbUrl, function (err) {
+	if (err) {  return console.log('there was a problem' + err);  }
+	console.log('connected!');
+});
 
 // setting body parser middleware 
 app.use(bodyParser.json());
@@ -154,6 +170,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
 app.use('/api', usersRoute);
+
+app.get('/', function (req, res) {
+	res.send('Hello World!')
+})
 
 // Running the server
 app.listen(port, () => {

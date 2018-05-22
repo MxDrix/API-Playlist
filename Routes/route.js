@@ -301,6 +301,7 @@ app.route('/playlist/search')
         query_id_playlist.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
+                console.log(res.status(200).json({id_playlist: result}))
                 res.status(200).json({id_playlist: result});
             } else {
                 query_nom_playlist.findOne(function (err, result) {
