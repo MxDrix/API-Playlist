@@ -146,8 +146,8 @@ var usersRoute = require('./Routes/route');
 const app = express();
 const port = process.env.PORT || 5656;
 // Connecting to the database
-//const db = mongoose.connect("mongodb://bendo330:root@ds111420.mlab.com:11420/playlistveille");
-const Schema = mongoose.Schema;
+const db = mongoose.connect("mongodb://ecvdigital:ecvdigital2018@ds111420.mlab.com:11420/playlistveille");
+/* const Schema = mongoose.Schema;
 const http = require('http');
 
 const playlist = new Schema({
@@ -162,7 +162,7 @@ db.on('error', function () {console.log('error');});
 mongoose.connect(dbUrl, function (err) {
 	if (err) {  return console.log('there was a problem' + err);  }
 	console.log('connected!');
-});
+}); */
 
 // setting body parser middleware 
 app.use(bodyParser.json());
