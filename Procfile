@@ -1,1 +1,1 @@
-web: node apinews.js && node apiplaylist.js
+web: node apiplaylist.js
