@@ -87,26 +87,25 @@ app.route('/connexion')
                 let allNews = false;
                 let allAbonnements = [];
 
+                // Parcours l'array des abonnements du user, pour chaque abonnement...
                 for (var j = 0; j < result.abonnement[0].length; j++) {
-                    var queryAbonnement  = Users.where({pseudo :result.abonnement[0][j]});
 
+                    // On récupère le pseudo de l'abonnement
+                    var queryAbonnement = Users.where({pseudo :result.abonnement[0][j]});
+
+                    // On test si on trouve cet user
                     queryAbonnement.findOne(function (err, result) {
                         if (err) return handleError(err);
                         if (result) {
-                            
-                            var queryPseudoAbonnement = Playlists.where({id_user :result.pseudo});
-
-                            queryPseudoAbonnement.findOne(function (err, result) { 
-                                if (err) return handleError(err);
-                                if (result) { 
-                                    allAbonnements.push(result);
-                                }
-                            })
+                            // On récupère toutes les playlists de cet user et on les ajoute à l'array allAbonnements
+                            var cursor = Playlists.find({id_user :result.pseudo}).cursor();
+                            cursor.on('data', function(doc) { allAbonnements.push(doc); });
                          }
-                    })
+                    });
                 }
 
                 for (let i = 0; i <result.fil_actu[0].length; i++) {
+                    console.log('Dans for i ###');
                     let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
                     cursor.on('data', function(doc) {
                         allResponse.push(doc);
@@ -120,7 +119,6 @@ app.route('/connexion')
                             res.setHeader('Cache-Control', 'public, max-age=31557600');
                             res.setHeader('Content-Type', 'application/json');
                             res.status(200).json({ all: {User: result, abo: allAbonnements, news: allResponse}});
-                            console.log('end json')
                         }
                     });
                 }
