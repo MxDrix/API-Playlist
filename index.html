@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Documentation API Playlist Veille Informationnelle</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .nav-user ul, .nav-playlist ul {
+            position: relative;
+            list-style: none;
+            text-align: center;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .nav-user ul::after, .nav-playlist ul::after {
+            content: '';
+            position: absolute;
+            width: 40%;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f2f2f2;
+        }
+
+        .nav-user ul li, .nav-playlist ul li {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 0 10px;
+            border-radius: 8px;
+            background-color: #f2f2f2;
+        }
+
+        .nav-user ul li a, .nav-playlist ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        section {
+            position: relative;
+            padding: 0 50px;
+            display: none;
+        }
+
+        article {
+            display: none;
+        }
+
+        .article-actif {
+            display: block;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .btn-change-section {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .btn-playlist {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <section class="active">
+        <button class="btn-change-section btn-playlist">GO to Users</button>
+        <h2>PLAYLIST</h2>
+
+        <div class="nav-playlist">
+            <ul>
+                <li><a href="#">Création</a></li>
+                <li><a href="#">Modification</a></li>
+                <li><a href="#">Suppression</a></li>
+                <li><a href="#">Recherche</a></li>
+            </ul>
+        </div>
+
+        <article class="article-playlist article-Création article-actif">
+            <h3>Création de Playlist</h3>
+            <p>La création de playlist permet de renseigner plusieurs paramètres contenant des informations sur la personnalisation de sa veille informationnelle.</p>
+    
+            <p><strong>Méthode</strong>: POST</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>id_playlist
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>id_user
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>nom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>categoriesContent
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>celebritesContent
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                    <li>motsCleContent
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple de création de playlist : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create?<br />motsCleContent=football,cdm,bresil,psg<br />&id_playlist=22<br />&id_user=Neymar<br />&celebritesContent=Messi,Nasser,Suarez<br />&nom=NeymarSportPlaylist<br />&categoriesContent=Sports</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : "Resultat": "New Playlist : nomPlaylist is created"</li>
+                    <li>Erreur (si id_playlist existe déjà) : “Error” : This id playlist is already exist</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="article-playlist article-Modification">
+            <h3>Modification de Playlist</h3>
+            <p>La modification de playlist permet de changer les informations liées à une playlist à l’aide de l’id_playlist dans la base de données.</p>
+    
+            <p><strong>Méthode</strong>: PUT</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/update</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>id_playlist
+                        <ul>
+                            <li>Type INT</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>nom
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                    <li>categoriesContent
+                        <ul>
+                            <li>Type String</li>
+                            <li>Par défaut toutes les catégories sont ajoutées</li>
+                        </ul>
+                    </li>
+                    <li>celebritesContent
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                    <li>motsCleContent
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple de création de playlist : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/update?<br />motsCleContent=tesla,voiture,fusée&<br />id_playlist=22&<br />id_user=ElonMusk&<br />celebritesContent=BilleGate,MarkZuckerberg&<br />nom=ElonMuskPlaylist&<br />categoriesContent=Technology,business</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : Affichage de la playlist à jour sous forme de JSON</li>
+                    <li>Erreur : Something wrong when updating data !</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="article-playlist article-Suppression">
+            <h3>Suppression de Playlist</h3>
+            <p>La suppression de playlist permet de supprimer une playlist de la base de donnée grâce à l’id_playlist.</p>
+    
+            <p><strong>Méthode</strong>: DELETE</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/delete</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>id_playlist
+                        <ul>
+                            <li>Type INT</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple de création de playlist : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/delete?id_playlist=22</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : “Resultat : Playlist *id_playlist* deleted”</li>
+                    <li>Erreur : “Error : Playlist *id_playlist* is not deleted”</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="article-playlist article-Recherche">
+            <h3>Recherche de Playlist</h3>
+            <p>La création de playlist permet de renseigner plusieurs paramètres contenant des informations sur la personnalisation de sa veille informationnelle.</p>
+    
+            <p><strong>Méthode</strong>: POST</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>id_playlist
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>id_user
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>nom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>categoriesContent
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>celebritesContent
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                    <li>motsCleContent
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple de création de playlist : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create?<br />motsCleContent=football,cdm,bresil,psg<br />&id_playlist=22<br />&id_user=Neymar<br />&celebritesContent=Messi,Nasser,Suarez<br />&nom=NeymarSportPlaylist<br />&categoriesContent=Sports</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : "Resultat": "New Playlist : nomPlaylist is created"</li>
+                    <li>Erreur (si id_playlist existe déjà) : “Error” : This id playlist is already exist</li>
+                </ul>
+            </div>
+        </article>
+        
+    </section>
+
+    <section>
+            <button class="btn-change-section btn-playlist">GO to Users</button>
+            <h2>USERS</h2>
+    
+            <article class="article-actif">
+                <h3>Création de Playlist</h3>
+                <p>La création de playlist permet de renseigner plusieurs paramètres contenant des informations sur la personnalisation de sa veille informationnelle.</p>
+        
+                <p><strong>Méthode</strong>: POST</p>
+        
+                <div>
+                    <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create</a></p>
+                </div>
+        
+                <div class="div-wrapper-bloc">
+                    <h4>Paramètres :</h4>
+        
+                    <ul>
+                        <li>id_playlist
+                            <ul>
+                                <li>Type String</li>
+                                <li>Obligatoire</li>
+                            </ul>
+                        </li>
+                        <li>id_user
+                            <ul>
+                                <li>Type String</li>
+                                <li>Obligatoire</li>
+                            </ul>
+                        </li>
+                        <li>nom
+                            <ul>
+                                <li>Type String</li>
+                                <li>Obligatoire</li>
+                            </ul>
+                        </li>
+                        <li>categoriesContent
+                            <ul>
+                                <li>Type String</li>
+                                <li>Obligatoire</li>
+                            </ul>
+                        </li>
+                        <li>celebritesContent
+                            <ul>
+                                <li>Type String</li>
+                            </ul>
+                        </li>
+                        <li>motsCleContent
+                            <ul>
+                                <li>Type String</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+    
+                <div class="div-wrapper-bloc">
+                    <h4>Exemple de création de playlist : </h4>
+                    <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create?<br />motsCleContent=football,cdm,bresil,psg<br />&id_playlist=22<br />&id_user=Neymar<br />&celebritesContent=Messi,Nasser,Suarez<br />&nom=NeymarSportPlaylist<br />&categoriesContent=Sports</p>
+                </div>
+    
+                <div class="div-wrapper-bloc">
+                    <h4>Informations reçues en retour de l’appel :</h4>
+    
+                    <ul>
+                        <li>Succès : "Resultat": "New Playlist : nomPlaylist is created"</li>
+                        <li>Erreur (si id_playlist existe déjà) : “Error” : This id playlist is already exist</li>
+                    </ul>
+                </div>
+            </article>
+    
+            
+            
+        </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <script>
+        $('.btn-change-section').on('click', function() {
+            $('section').toggleClass("active");
+        });
+
+        $('.nav-playlist ul li a').on('click', function() {
+            $('.article-playlist').removeClass('article-actif');
+            var label = $(this).text();
+
+            $('.article-'+label).addClass('article-actif');
+        });
+    </script>
+</body>
+</html>
