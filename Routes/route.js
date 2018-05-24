@@ -27,8 +27,8 @@ app.route('/inscription')
         let abonnement = req.query["abonnement"];  
         let lang = req.query["lang"];
         let fil_actu = req.query["fil_actu"]; 
-        let hash = bcrypt.hashSync(password, 10);
-        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: hash,dateinscription: today, lang: lang});
+        // let hash = bcrypt.hashSync(password, 10);
+        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: password,dateinscription: today, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
