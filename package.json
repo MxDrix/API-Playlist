@@ -4,7 +4,7 @@
   "description": "Création d'une API pour récupérer des données informationnelles des API Google NEWS et TWITTER ",
   "main": "index.js",
   "dependencies": {
-    "bcrypt": "^2.0.1",
+    "bcrypt-nodejs": "0.0.3",
     "express": "^4.16.3",
     "express-rate-limit": "^2.11.0",
     "http": "0.0.0",
