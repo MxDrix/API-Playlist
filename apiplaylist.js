@@ -170,7 +170,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
 app.use('/api', usersRoute);
-app.post('/api/playlist/create');
 
 app.get('/', function (req, res) {
 	res.send('API Playlist Veille Informationnelle');

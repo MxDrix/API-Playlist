@@ -14,18 +14,8 @@ var day = ("0" + now.getDate()).slice(-2);
 var month = ("0" + (now.getMonth() + 1)).slice(-2);
 var today = now.getFullYear() + "-" + (month) + "-" + (day);
 
-var RateLimit = require('express-rate-limit');
-
-
-var createPlaylistLimiter = new RateLimit({
-	windowMs: 15*60*1000, // 15 minutes
-	max: 2, // limit each IP to 100 requests per windowMs
-	delayMs: 0 // disable delaying - full speed until the max limit is reached
-});
-
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
-// Ex : .../api/inscription?nom=ngoum&prenom=benjamin&pseudo=bendo&email=benj@gmail.com&password=azerty&abonnement=ElonMusk&lang=fr&fil_actu=business,sports
 app.route('/inscription')
     .post((req, res) => {
         let nom = req.query["nom"];
@@ -105,7 +95,6 @@ app.route('/connexion')
                 }
 
                 for (let i = 0; i <result.fil_actu[0].length; i++) {
-                    console.log('Dans for i ###');
                     let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
                     cursor.on('data', function(doc) {
                         allResponse.push(doc);
@@ -178,42 +167,52 @@ app.route('/user')
 .get((req, res) => {
     let user = req.query["user"];
     var query  = Users.where({nom : user});
-    query.findOne(function (err, result) {
-        if (err) return handleError(err);
-        if (result) {
-            res.status(200).json({nom: result});
-        }else{
-            query  = Users.where({prenom : user});
-            query.findOne(function (err, result) {
-                if (err) return handleError(err);
-                if (result) {
-                    res.status(200).json({prenom: result});
-                }else{
+    var arrayOfUsers = [];
+    var cursorName = Users.find({nom :user}).cursor();
+
+    // On parcours dans la BDD tous les documents ayant comme champs nom : user
+    cursorName.on('data', function(doc) { arrayOfUsers.push(doc); });
+
+    // Une fois qu'on a fini de parcourir
+    cursorName.on('close', function() {
+        // On vérifie qu'au moins un élément a été ajouté dans l'array de résultat...
+        if (arrayOfUsers.length > 0) {
+            res.status(200).json({ arrayOfUsers });
+        // Sinon on effectue la même procédure pour le champs prenom
+        } else {
+            var cursorFirstName = Users.find({prenom :user}).cursor();
+            cursorFirstName.on('data', function(doc) { arrayOfUsers.push(doc); });
+
+            cursorFirstName.on('close', function() {
+                if (arrayOfUsers.length > 0) {
+                    res.status(200).json({ arrayOfUsers });
+                } else { 
+                    // On vérifie si un pseudo correspond au pseudo saisi
                     query  = Users.where({pseudo : user});
                     query.findOne(function (err, result) {
                         if (err) return handleError(err);
                         if (result) {
-                            res.status(200).json({pseudo: result});
+                            res.status(200).json({User: result});
                         }else{
+                            // On vérifie si un email correspond à l'email saisi
                             query  = Users.where({email : user});
                             query.findOne(function (err, result) {
                                 if (err) return handleError(err);
                                 if (result) {
-                                    res.status(200).json({Resultat: result});
+                                    res.status(200).json({User: result});
                                 }else{                                    
                                     res.status(400).json({error: "No user found in database"});
                                 }
                             })
                         }
                     })
-                }
-            })
+                 }
+            });
         }
     });
 })
 
 // Créer une playlist
-// Ex : http://localhost:5656/api/playlist/create?motsCleContent=tesla,psg,info&id_playlist=32&id_user=4&celebritesContent=ElonMusk,ChrisBrown,Neymar&nom=MyPlaylist&categoriesContent=Sports
 app.route('/playlist/create')
     .post((req, res) => {
 
@@ -233,16 +232,18 @@ app.route('/playlist/create')
         let id_user = req.query["id_user"];
         let nom = req.query["nom"];
         let categoriesContent = req.query["categoriesContent"];
-        let celebritesContent = req.query["celebritesContent"];
-        let motsCleContent = req.query["motsCleContent"];
+        let celebritesContent = req.query["celebritesContent"] || '';
+        let motsCleContent = req.query["motsCleContent"] || '';
 
         var playlist = new Playlists({ id_playlist: id_playlist, id_user: id_user, nom: nom, categoriesContent: categoriesContent, celebritesContent: celebritesContent, motsCleContent: motsCleContent})
+
+        console.log('### in create')
 
         var query = Playlists.where({id_playlist :id_playlist});
 
         var list_categoriesContent = categoriesContent.split(",");
-        var list_celebritesContent = celebritesContent.split(",");
-        var list_motsCleContent = motsCleContent.split(","); 
+        var list_celebritesContent = celebritesContent.split(",") || '';
+        var list_motsCleContent = motsCleContent.split(",") || ''; 
 
         object_content.Categories.id = list_categoriesContent;
         object_content.Celebrites.nom = list_celebritesContent;
@@ -286,16 +287,15 @@ app.route('/playlist/update')
             }
         };
 
-        let defaultCategories;
         let id_playlist = req.query["id_playlist"];
         let nom = req.query["nom"];
         let categoriesContent = req.query["categoriesContent"] || "business, entertainment, health, science, sports, technology";
-        let celebritesContent = req.query["celebritesContent"];
-        let motsCleContent = req.query["motsCleContent"];
+        let celebritesContent = req.query["celebritesContent"] || '';
+        let motsCleContent = req.query["motsCleContent"] || '';
 
         var list_categoriesContent = categoriesContent.split(",");
-        var list_celebritesContent = celebritesContent.split(",");
-        var list_motsCleContent = motsCleContent.split(",");
+        var list_celebritesContent = celebritesContent.split(",") || '';
+        var list_motsCleContent = motsCleContent.split(",") || '';
 
         object_content.Categories.id = list_categoriesContent;
         object_content.Celebrites.nom = list_celebritesContent;
@@ -310,7 +310,7 @@ app.route('/playlist/update')
             content: array_of_object,
         }}, {returnOriginal: false}, function(err, doc) {
             if(err){
-                res.status(500).json({ error: "Something wrong when updating data!"});
+                res.status(500).json({ error: "Something wrong when updating data !"});
             }
             if(doc){
                 res.status(200).json({ Resultat: doc});
@@ -325,23 +325,26 @@ app.route('/playlist/search')
         let id_playlist = req.query["id_playlist"] || "";
         let nom = req.query["nom"] || "";
 
+        var arrayPlaylistByName = [];
+
         var query_id_playlist = Playlists.where({id_playlist : id_playlist})
         var query_nom_playlist = Playlists.where({nom : nom})
 
         query_id_playlist.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
-                console.log(res.status(200).json({id_playlist: result}))
                 res.status(200).json({id_playlist: result});
             } else {
-                query_nom_playlist.findOne(function (err, result) {
-                    if (err) return handleError(err);
-                    if (result) {
-                        res.status(200).json({nom: result});
+                var cursor = Playlists.find({nom :nom}).cursor();
+                cursor.on('data', function(doc) { arrayPlaylistByName.push(doc); });
+
+                cursor.on('close', function() {
+                    if (arrayPlaylistByName.length > 0) {
+                        res.status(200).json({ arrayPlaylistByName });
                     } else {
                         res.status(400).json({error: "No playlist found in database"});
                     }
-                })
+                });
             }
         })
     })
@@ -355,11 +358,11 @@ app.route('/playlist/delete')
 
             var query_id_playlist = {id_playlist: id_playlist};
             
-            Playlists.remove(query_id_playlist, function(err) {                
-                if (err) return res.status(500).json({ error: err});                
-                res.status(200).json({ Resultat: "Playlist " + id_playlist + " delete"});
+            Playlists.remove(query_id_playlist, function(err) {
+                console.log('dans remove.')            
+                if (err) return res.status(500).json({ Error: "Playlist " + id_playlist + " is not deleted"});                
+                res.status(200).json({ Resultat: "Playlist " + id_playlist + " deleted"});
             });
-
         }
         catch(e){
             res.status(400).json({error: e});
