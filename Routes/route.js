@@ -13,7 +13,7 @@ var now = new Date();
 var day = ("0" + now.getDate()).slice(-2);
 var month = ("0" + (now.getMonth() + 1)).slice(-2);
 var today = now.getFullYear() + "-" + (month) + "-" + (day);
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 const saltRounds = 10;
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
@@ -27,8 +27,8 @@ app.route('/inscription')
         let abonnement = req.query["abonnement"];  
         let lang = req.query["lang"];
         let fil_actu = req.query["fil_actu"]; 
-        let hash = bcrypt.hashSync('myPassword', 10);
-        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: hash,dateinscription: today, lang: lang});
+        // let hash = bcrypt.hashSync('myPassword', 10);
+        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: password,dateinscription: today, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
