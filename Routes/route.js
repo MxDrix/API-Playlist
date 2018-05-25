@@ -14,6 +14,8 @@ var day = ("0" + now.getDate()).slice(-2);
 var month = ("0" + (now.getMonth() + 1)).slice(-2);
 var today = now.getFullYear() + "-" + (month) + "-" + (day);
 const bcrypt = require('bcrypt-nodejs');
+var helmet = require('helmet');
+
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
 app.route('/inscription')
@@ -26,8 +28,9 @@ app.route('/inscription')
         let abonnement = req.query["abonnement"];  
         let lang = req.query["lang"];
         let fil_actu = req.query["fil_actu"]; 
-        let hash = bcrypt.hashSync('myPassword', 10);
-        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: password,dateinscription: today, lang: lang});
+        let hash = bcrypt.hashSync(password);
+        console.log(hash)
+        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: hash,dateinscription: today, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
@@ -67,8 +70,9 @@ app.route('/inscription')
 app.route('/connexion')
     .get((req, res) => {
         let email = req.query["email"];
-        let password = req.query["password"];        
-        var query  = Users.where({email :email,password:password});
+        let password = req.query["password"]; 
+        var hash = bcrypt.hashSync(password);       
+        var query  = Users.where({email :email,password:hash});
         query.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
@@ -127,13 +131,13 @@ app.route('/update')
         let password = req.query["password"];  
         let email = req.query["email"];
         let abonnement = req.query["abonnement"];  
-
+        let hash = bcrypt.hashSync(password);
         var query = { email: email};
         collection.findOneAndUpdate(query, { $set: {  
             nom: nom,
             prenom: prenom,
             pseudo: pseudo,
-            password: password,
+            password: hash,
             abonnement: abonnement   
         }}, {returnOriginal: false}, function(err, doc){
             if(err){
