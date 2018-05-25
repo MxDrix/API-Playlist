@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api', usersRoute);
 
 app.get('/', function (req, res) {
-	res.send('API Playlist Veille Informationnelle');
+	res.sendFile(path.join(__dirname + '/index.html'));
 })
 
 // Running the server
