@@ -28,6 +28,7 @@ app.route('/inscription')
         let lang = req.query["lang"];
         let fil_actu = req.query["fil_actu"]; 
         let hash = bcrypt.hashSync(password);
+        bcrypt.compareSync(password, hash);
         console.log(hash)
         let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: hash,dateinscription: today, lang: lang});
         // user.save();
@@ -70,55 +71,63 @@ app.route('/connexion')
     .get((req, res) => {
         let email = req.query["email"];
         let password = req.query["password"]; 
-        var hash = bcrypt.hashSync(password);       
-        var query  = Users.where({email :email,password:hash});
-        query.findOne(function (err, result) {
-            if (err) return handleError(err);
-            if (result) {
-                let allResponse= []; 
-                let allCategory = [];
-                let allNews = false;
-                let allAbonnements = [];
-
-                // Parcours l'array des abonnements du user, pour chaque abonnement...
-                for (var j = 0; j < result.abonnement[0].length; j++) {
-
-                    // On récupère le pseudo de l'abonnement
-                    var queryAbonnement = Users.where({pseudo :result.abonnement[0][j]});
-
-                    // On test si on trouve cet user
-                    queryAbonnement.findOne(function (err, result) {
+        var queryEmail  = Users.where({email :email});
+        queryEmail.findOne(function (err, result) {
+            if(result){
+                if(bcrypt.compareSync(password,result.password)){
+                    var query  = Users.where({email :email});
+                    query.findOne(function (err, result) {
                         if (err) return handleError(err);
                         if (result) {
-                            // On récupère toutes les playlists de cet user et on les ajoute à l'array allAbonnements
-                            var cursor = Playlists.find({id_user :result.pseudo}).cursor();
-                            cursor.on('data', function(doc) { allAbonnements.push(doc); });
-                         }
-                    });
-                }
+                            let allResponse= []; 
+                            let allCategory = [];
+                            let allNews = false;
+                            let allAbonnements = [];
 
-                for (let i = 0; i <result.fil_actu[0].length; i++) {
-                    let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
-                    cursor.on('data', function(doc) {
-                        allResponse.push(doc);
-                    });
-                    cursor.on('close', function() {   
-                        if(i == result.fil_actu[0].length - 1){
-                            allResponse.sort();
-                            allResponse.sort(function(a, b){
-                                return a.publishedAt - b.publishedAt;
-                            });
-                            res.setHeader('Cache-Control', 'public, max-age=31557600');
-                            res.setHeader('Content-Type', 'application/json');
-                            res.status(200).json({ all: {User: result, abo: allAbonnements, news: allResponse}});
+                            // Parcours l'array des abonnements du user, pour chaque abonnement...
+                            for (var j = 0; j < result.abonnement[0].length; j++) {
+
+                                // On récupère le pseudo de l'abonnement
+                                var queryAbonnement = Users.where({pseudo :result.abonnement[0][j]});
+
+                                // On test si on trouve cet user
+                                queryAbonnement.findOne(function (err, result) {
+                                    if (err) return handleError(err);
+                                    if (result) {
+                                        // On récupère toutes les playlists de cet user et on les ajoute à l'array allAbonnements
+                                        var cursor = Playlists.find({id_user :result.pseudo}).cursor();
+                                        cursor.on('data', function(doc) { allAbonnements.push(doc); });
+                                    }
+                                });
+                            }
+
+                            for (let i = 0; i <result.fil_actu[0].length; i++) {
+                                let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
+                                cursor.on('data', function(doc) {
+                                    allResponse.push(doc);
+                                });
+                                cursor.on('close', function() {   
+                                    if(i == result.fil_actu[0].length - 1){
+                                        allResponse.sort();
+                                        allResponse.sort(function(a, b){
+                                            return a.publishedAt - b.publishedAt;
+                                        });
+                                        res.status(200).json({ all: {User: {nom: result.nom, prenom: result.prenom}, abo: allAbonnements, news: allResponse}});
+                                    }
+                                });
+                            }
+
                         }
-                    });
+                    }); 
+                }else{
+                    res.status(400).json({ error: "Incorrect password"});
                 }
-
-            } else {
-                res.status(400).json({ error: "Incorrect pseudo or password"});
+            }else{
+                res.status(400).json({ error: "Incorrect email"});
             }
-        });        
+
+        });
+               
     });
 
 // Update user by email
@@ -174,7 +183,7 @@ app.route('/user')
     var cursorName = Users.find({nom :user}).cursor();
 
     // On parcours dans la BDD tous les documents ayant comme champs nom : user
-    cursorName.on('data', function(doc) { arrayOfUsers.push(doc); });
+    cursorName.on('data', function(doc) { arrayOfUsers.push(doc.nom); });
 
     // Une fois qu'on a fini de parcourir
     cursorName.on('close', function() {
