@@ -7,8 +7,12 @@
     <title>Documentation API Playlist Veille Informationnelle</title>
 
     <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,700');
+    </style>
+    <style>
         * {
             box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
         }
 
         .nav-user ul, .nav-playlist ul {
@@ -43,7 +47,7 @@
             color: #333;
         }
 
-        h2 {
+        h1, h2 {
             text-align: center;
         }
 
@@ -51,6 +55,16 @@
             position: relative;
             padding: 0 50px;
             display: none;
+        }
+
+        .section-liste-routes {
+            display: block;
+            text-align: center;
+            width: 70%;
+            margin: auto;
+            background: #f7f7f7;
+            padding: 20px;
+            border-radius: 6px;
         }
 
         article {
@@ -74,19 +88,100 @@
         .btn-playlist {
             right: 0;
         }
+
+        .div-bloc-liste-routes {
+            display: inline-block;
+            vertical-align: top;
+            text-align: left;
+            margin: 0 50px;
+        }
+
+        .div-bloc-liste-routes ul {
+            padding: 0;
+        }
+        .tabs {
+            text-align: center;
+        }
+
+        .tabs h2, .tabs p {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .tabs h2 a {
+            position: relative;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .tabs h2 a.actif::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 3px;
+            width: 80%;
+            background: #333;
+        }
+
+        .tabs h2 a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 3px;
+            width: 80%;
+            background: #333;
+        }
+
+        .tabs p {
+            font-size: 24px;
+        }
+
     </style>
 </head>
 <body>
-    <section class="active">
-        <button class="btn-change-section btn-playlist">GO to Users</button>
-        <h2>PLAYLIST</h2>
+    <h1>Documentation API Playlist Veille Informationnelle</h1>
 
+    <section class="section-liste-routes">
+        <h2>Liste des routes possibles de l'API :</h2>
+
+        <div class="div-bloc-liste-routes">
+            <h3>Utilisateur</h3>
+            <ul>
+                <li>api/inscription</li>
+                <li>api/connexion</li>
+                <li>api/update</li>
+                <li>api/delete</li>
+                <li>api/user</li>
+            </ul>
+        </div>
+
+        <div class="div-bloc-liste-routes">
+            <h3>Playlist</h3>
+            <ul>
+                <li>api/playlist/create</li>
+                <li>api/playlist/connexion</li>
+                <li>api/playlist/update</li>
+                <li>api/playlist/delete</li>
+                <li>api/playlist/user</li>
+            </ul>
+        </div>
+    </section>
+
+    <div id="ancre-tabs" class="tabs">
+        <h2><a href="#ancre-tabs" class="actif">PLAYLIST</a></h2> <p>/</p> <h2><a href="#ancre-tabs">USERS</a></h2>
+    </div>
+
+    <section class="active">
         <div class="nav-playlist">
             <ul>
-                <li><a href="#">Création</a></li>
-                <li><a href="#">Modification</a></li>
-                <li><a href="#">Suppression</a></li>
-                <li><a href="#">Recherche</a></li>
+                <li><a href="#ancre-tabs">Création</a></li>
+                <li><a href="#ancre-tabs">Modification</a></li>
+                <li><a href="#ancre-tabs">Suppression</a></li>
+                <li><a href="#ancre-tabs">Recherche</a></li>
             </ul>
         </div>
 
@@ -322,88 +417,341 @@
     </section>
 
     <section>
-            <button class="btn-change-section btn-playlist">GO to Users</button>
-            <h2>USERS</h2>
+        <div class="nav-user">
+            <ul>
+                <li><a href="#ancre-tabs">Inscription</a></li>
+                <li><a href="#ancre-tabs">Connexion</a></li>
+                <li><a href="#ancre-tabs">Modification</a></li>
+                <li><a href="#ancre-tabs">Suppression</a></li>
+                <li><a href="#ancre-tabs">Recherche</a></li>
+            </ul>
+        </div>
+        <article class="article-user article-Inscription article-actif">
+            <h3>Inscription Utilisateur</h3>
+            <p>L'inscription sert à créer la fiche de l'utilisateur, il y renseigne son nom, prénom, pseudo, mot de passe, adresse email, sa langue, ces différents abonnement à d'autre utilisateur et aussi son fil d'actualité.</p>
     
-            <article class="article-actif">
-                <h3>Création de Playlist</h3>
-                <p>La création de playlist permet de renseigner plusieurs paramètres contenant des informations sur la personnalisation de sa veille informationnelle.</p>
+            <p><strong>Méthode</strong>: POST</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/inscription</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>nom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>prenom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>pseudo
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>password
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>email
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                    <li>abonnement
+                        <ul>
+                            <li>Type list d'utilisateur</li>
+                            <li>(facultatif)</li>
+                        </ul>
+                    </li>
+                    <li>lang
+                        <ul>
+                            <li>Type String</li>
+                            <li>Defaut: "fr"</li>
+                            <li>(facultatif)</li>
+                        </ul>
+                    </li>
+                    <li>fil_actu
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple d'utilisation de la création : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/inscription?nom=votrenom&<br />prenom=votreprenom&<br />pseudo=votrepseudo&<br />email=votreadresseemail&<br />password=votrepassword&<br />abonnement=vosabonnement&<br />lang=fr&<br />fil_actu=voscategoriesdufildactualite</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : "Resultat": "New user create"</li>
+                    <li>Erreur : Si le pseudo et/ou l'adresse email est déjà dans notre base de données<br />
+                            error "This user pseudo already existe"<br />
+                            error "This user email already existe"
+                    </li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="article-user article-Connexion">
+            <h3>Connexion Utilisateur</h3>
+            <p>La connexion sert aux utilisateurs à avoir accès aux informations déployé par l'API, une fois connecté à celle-ci, l'utilisateur retrouve son fil d'actualité qu'il a paramétré lors de son inscription, il peut également modifier ou supprimer son compte.</p>
+    
+            <p><strong>Méthode</strong>: GET</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/connexion</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>email
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>password
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple d'utilisation de la connexion' : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/connexion?email=adresseemail&password=votremotdepasse</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès :  "Resultat" : 
+                        <ul>
+                            <li>Information de l'utilisateur (au format json)</li>
+                            <li>Liste des news de son fil d'actualité (au format json)</li>
+                        </ul>
+                    </li>
+                    <li>Erreur : "Incorrect pseudo or password"</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="article-user article-Modification">
+            <h3>Modification Utilisateur</h3>
+            <p>La modification sert aux utilisateurs à remplacer leurs informations, le nom, le prénom, le pseudo,le mot de passe,l’adresse email, l’abonnement, la langue et également le fil d’actualité.</p>
+    
+            <p><strong>Méthode</strong>: PUT</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/update</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>nom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>prenom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>pseudo
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>password
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>email
+                        <ul>
+                            <li>Type String</li>
+                        </ul>
+                    </li>
+                    <li>abonnement
+                        <ul>
+                            <li>Type list d'utilisateur</li>
+                            <li>(facultatif)</li>
+                        </ul>
+                    </li>
+                    <li>lang
+                        <ul>
+                            <li>Type String</li>
+                            <li>Defaut: "fr"</li>
+                            <li>(facultatif)</li>
+                        </ul>
+                    </li>
+                    <li>fil_actu
+                        <ul>
+                            <li>Type Array</li>
+                            <li>les valeurs doivent être séparé par une virgule “,”</li>
+                            <li>valeurs : business entertainment general health science sports technology</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple d'utilisation de la modification' : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/update?nom=votrenom&<br/>prenom=votreprenom&<br/>pseudo=votrepseudo&<br/>email=votreadresseemail&<br/>password=votrepassword&<br/>abonnement=vosabonnement&<br/>lang=fr&<br/>fil_actu=voscategoriesdufildactualite</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : "Resultat": JSON du user</li>
+                    <li>Erreur : "Something wrong when updating data!"</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="article-user article-Suppression">
+            <h3>Suppression Utilisateur</h3>
+            <p>La suppression sert à effacer toutes les données de la base de données d'un utilisateur. Une fois faite avec succès, il n'y a aucun moyen de récupérer les données supprimées.</p>
+    
+            <p><strong>Méthode</strong>: DELETE</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/delete</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>email
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple d'utilisation de la suppression : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/update?email=votreadresseemail</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : "User delete"</li>
+                    <li>Erreur : "error: err"</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="article-user article-Recherche">
+            <h3>Recherche Utilisateur</h3>
+            <p>La recherche d'un utilisateur sert à afficher les données d'un utilisateur. La recherche s'effectue à l'aide du nom, prénom, pseudo ou email. S'il y a plusieurs utilisateurs avec le même nom ou prénom, tous ces utilisateurs seront affichés. Un seul paramètre est accepté.</p>
+    
+            <p><strong>Méthode</strong>: GET</p>
+    
+            <div>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/user</a></p>
+            </div>
+    
+            <div class="div-wrapper-bloc">
+                <h4>Paramètres :</h4>
+    
+                <ul>
+                    <li>nom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>prenom
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>pseudo
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                    <li>email
+                        <ul>
+                            <li>Type String</li>
+                            <li>Obligatoire</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Exemple d'utilisation de la recherche : </h4>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/user?pseudo=unpseudo</p>
+            </div>
+
+            <div class="div-wrapper-bloc">
+                <h4>Informations reçues en retour de l’appel :</h4>
+
+                <ul>
+                    <li>Succès : Affichage du JSON contenant les informations de l'utilisateur.</li>
+                    <li>Erreur : "No user found in database"</li>
+                </ul>
+            </div>
+        </article>
         
-                <p><strong>Méthode</strong>: POST</p>
-        
-                <div>
-                    <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create</a></p>
-                </div>
-        
-                <div class="div-wrapper-bloc">
-                    <h4>Paramètres :</h4>
-        
-                    <ul>
-                        <li>id_playlist
-                            <ul>
-                                <li>Type String</li>
-                                <li>Obligatoire</li>
-                            </ul>
-                        </li>
-                        <li>id_user
-                            <ul>
-                                <li>Type String</li>
-                                <li>Obligatoire</li>
-                            </ul>
-                        </li>
-                        <li>nom
-                            <ul>
-                                <li>Type String</li>
-                                <li>Obligatoire</li>
-                            </ul>
-                        </li>
-                        <li>categoriesContent
-                            <ul>
-                                <li>Type String</li>
-                                <li>Obligatoire</li>
-                            </ul>
-                        </li>
-                        <li>celebritesContent
-                            <ul>
-                                <li>Type String</li>
-                            </ul>
-                        </li>
-                        <li>motsCleContent
-                            <ul>
-                                <li>Type String</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-    
-                <div class="div-wrapper-bloc">
-                    <h4>Exemple de création de playlist : </h4>
-                    <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create?<br />motsCleContent=football,cdm,bresil,psg<br />&id_playlist=22<br />&id_user=Neymar<br />&celebritesContent=Messi,Nasser,Suarez<br />&nom=NeymarSportPlaylist<br />&categoriesContent=Sports</p>
-                </div>
-    
-                <div class="div-wrapper-bloc">
-                    <h4>Informations reçues en retour de l’appel :</h4>
-    
-                    <ul>
-                        <li>Succès : "Resultat": "New Playlist : nomPlaylist is created"</li>
-                        <li>Erreur (si id_playlist existe déjà) : “Error” : This id playlist is already exist</li>
-                    </ul>
-                </div>
-            </article>
-    
-            
-            
-        </section>
+    </section>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
     <script>
-        $('.btn-change-section').on('click', function() {
+        $('.tabs h2 a').on('click', function() {
+            $('.tabs h2 a').removeClass('actif');
+            $(this).addClass('actif');
             $('section').toggleClass("active");
         });
 
         $('.nav-playlist ul li a').on('click', function() {
             $('.article-playlist').removeClass('article-actif');
+            var label = $(this).text();
+
+            $('.article-'+label).addClass('article-actif');
+        });
+
+        $('.nav-user ul li a').on('click', function() {
+            $('.article-user').removeClass('article-actif');
             var label = $(this).text();
 
             $('.article-'+label).addClass('article-actif');
