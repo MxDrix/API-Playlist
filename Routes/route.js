@@ -29,7 +29,6 @@ app.route('/inscription')
         let fil_actu = req.query["fil_actu"]; 
         let hash = bcrypt.hashSync(password);
         bcrypt.compareSync(password, hash);
-        console.log(hash)
         let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: hash,dateinscription: today, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
