@@ -19,7 +19,9 @@ app.use('/api', usersRoute);
 app.get('/', function (req, res) {
 	res.sendFile(__dirname + '/index.html');
 })
-
+app.get('*', function(req, res){
+	res.send("Error, this route doesn't existe", 404);
+  });
 // Running the server
 app.listen(port, () => {
 	console.log(`http://localhost:${port}`)
