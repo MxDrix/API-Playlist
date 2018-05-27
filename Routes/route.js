@@ -142,7 +142,10 @@ app.route('/email')
             auth: {
                    user: 'mxzerd@gmail.com',
                    pass: 'ri18@ecvDigital'
-               }
+               },
+            tls: {
+                rejectUnauthorized: false
+            }
            });
            const mailOptions = {
             from: 'sender@email.com', // sender address
