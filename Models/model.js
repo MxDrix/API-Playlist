@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 
 const Users = new Schema({
 	_id: Schema.ObjectId,
+	tokenuser: {type: String},
 	nom: { type: String },
 	prenom: { type: String },
 	pseudo: { type: String },
