@@ -350,12 +350,12 @@
 
         <article class="article-playlist article-Recherche">
             <h3>Recherche de Playlist</h3>
-            <p>La création de playlist permet de renseigner plusieurs paramètres contenant des informations sur la personnalisation de sa veille informationnelle.</p>
+            <p>La recherche d’une playlist est possible à l’aide de l’id_playlist ou du nom en parcourant la base de données. En cas de doublons de nom, toutes les playlists s’afficheront.</p>
     
-            <p><strong>Méthode</strong>: POST</p>
+            <p><strong>Méthode</strong>: GET</p>
     
             <div>
-                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create</a></p>
+                <p>Route: <a href="#">https://api-playlist-veille-ecv.herokuapp.com/api/playlist/search</a></p>
             </div>
     
             <div class="div-wrapper-bloc">
@@ -364,36 +364,14 @@
                 <ul>
                     <li>id_playlist
                         <ul>
-                            <li>Type String</li>
-                            <li>Obligatoire</li>
-                        </ul>
-                    </li>
-                    <li>id_user
-                        <ul>
-                            <li>Type String</li>
-                            <li>Obligatoire</li>
+                            <li>Type INT</li>
+                            <li>Obligatoire / Optionnel</li>
                         </ul>
                     </li>
                     <li>nom
                         <ul>
                             <li>Type String</li>
-                            <li>Obligatoire</li>
-                        </ul>
-                    </li>
-                    <li>categoriesContent
-                        <ul>
-                            <li>Type String</li>
-                            <li>Obligatoire</li>
-                        </ul>
-                    </li>
-                    <li>celebritesContent
-                        <ul>
-                            <li>Type String</li>
-                        </ul>
-                    </li>
-                    <li>motsCleContent
-                        <ul>
-                            <li>Type String</li>
+                            <li>Obligatoire / Optionnel</li>
                         </ul>
                     </li>
                 </ul>
@@ -401,15 +379,15 @@
 
             <div class="div-wrapper-bloc">
                 <h4>Exemple de création de playlist : </h4>
-                <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/create?<br />motsCleContent=football,cdm,bresil,psg<br />&id_playlist=22<br />&id_user=Neymar<br />&celebritesContent=Messi,Nasser,Suarez<br />&nom=NeymarSportPlaylist<br />&categoriesContent=Sports</p>
+                <p>https://api-playlist-veille-ecv.herokuapp.com/api/playlist/search?id_playlist=22&nom=MyPlaylist</p>
             </div>
 
             <div class="div-wrapper-bloc">
                 <h4>Informations reçues en retour de l’appel :</h4>
 
                 <ul>
-                    <li>Succès : "Resultat": "New Playlist : nomPlaylist is created"</li>
-                    <li>Erreur (si id_playlist existe déjà) : “Error” : This id playlist is already exist</li>
+                    <li>Succès : Affiche le(s) JSON correspondant “Playlist :{...}”</li>
+                    <li>Erreur : "error": "No playlist found in database"</li>
                 </ul>
             </div>
         </article>

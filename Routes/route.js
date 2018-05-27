@@ -46,7 +46,7 @@ app.route('/inscription')
                         // collection.insertOne(user,req.params.fil_actu);
                         collection.insert(user);
                         let array_of_fil_actu = fil_actu.split(",");
-                        let array_of_abonnement = abonnement.split(",");
+                        let array_of_abonnement = abonnement.split(",") || abonnement;
 
                         collection.findOneAndUpdate(
                             { email: user.email }, 
@@ -88,7 +88,7 @@ app.route('/connexion')
 
                                 // On récupère le pseudo de l'abonnement
                                 var queryAbonnement = Users.where({pseudo :result.abonnement[0][j]});
-
+                                
                                 // On test si on trouve cet user
                                 queryAbonnement.findOne(function (err, result) {
                                     if (err) return handleError(err);
