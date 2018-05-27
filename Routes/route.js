@@ -373,33 +373,53 @@ app.route('/playlist/update')
         });
     })
 
-// Chercher une playlist à l'aide de l'id_playlist et/ou du nom
+// Chercher une playlist à l'aide de l'id_playlist et/ou du nom / pseudo
 app.route('/playlist/search')
     .get((req, res) => {
 
         let id_playlist = req.query["id_playlist"] || "";
         let nom = req.query["nom"] || "";
+        let pseudo = req.query["pseudo"] || "";
 
         var arrayPlaylistByName = [];
+        var arrayPlaylistByPseudo = [];
 
         var query_id_playlist = Playlists.where({id_playlist : id_playlist})
         var query_nom_playlist = Playlists.where({nom : nom})
+        var query_pseudo_playlist = Playlists.where({id_user : pseudo})
 
+        // Recherche par id_playlist
         query_id_playlist.findOne(function (err, result) {
             if (err) return handleError(err);
             if (result) {
                 res.status(200).json({id_playlist: result});
             } else {
-                var cursor = Playlists.find({nom :nom}).cursor();
-                cursor.on('data', function(doc) { arrayPlaylistByName.push(doc); });
+                //Recherche par nom
+                if (nom !== "") {
+                    var cursor = Playlists.find({nom :nom}).cursor();
+                    cursor.on('data', function(doc) { arrayPlaylistByName.push(doc); });
 
-                cursor.on('close', function() {
-                    if (arrayPlaylistByName.length > 0) {
-                        res.status(200).json({ arrayPlaylistByName });
-                    } else {
-                        res.status(400).json({error: "No playlist found in database"});
-                    }
-                });
+                    cursor.on('close', function() {
+                        if (arrayPlaylistByName.length > 0) {
+                            res.status(200).json({ arrayPlaylistByName });
+                        } else {
+                            res.status(400).json({error: "No playlist with this name found in database"});
+                        }
+                    });
+                // Recherche par pseudo
+                } else {
+                    var cursorPseudo = Playlists.find({id_user :pseudo}).cursor();
+
+                    cursorPseudo.on('data', function(doc) { arrayPlaylistByPseudo.push(doc); });
+
+                    cursorPseudo.on('close', function() {
+                        if (arrayPlaylistByPseudo.length > 0) {
+                            res.status(200).json({ arrayPlaylistByPseudo });
+                        } else {
+                            res.status(400).json({error: "No playlist with this pseudo found in database"});
+                        }
+                    });
+                }
             }
         })
     })
