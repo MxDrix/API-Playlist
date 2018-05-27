@@ -146,7 +146,7 @@ app.route('/email')
            });
            const mailOptions = {
             from: 'sender@email.com', // sender address
-            to: 'to@email.com', // list of receivers
+            to: 'richard.chandon@gmail.com', // list of receivers
             subject: 'Subject of your email', // Subject line
             html: '<p>Your html here</p>'// plain text body
           };
