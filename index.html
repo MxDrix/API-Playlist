@@ -737,20 +737,23 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
     <script>
-        $('.tabs h2 a').on('click', function() {
+        $('.tabs h2 a').on('click', function(e) {
+            e.stopPropagation();
             $('.tabs h2 a').removeClass('actif');
             $(this).addClass('actif');
             $('section').toggleClass("active");
         });
 
-        $('.nav-playlist ul li a').on('click', function() {
+        $('.nav-playlist ul li a').on('click', function(e) {
+            e.stopPropagation();
             $('.article-playlist').removeClass('article-actif');
             var label = $(this).text();
 
             $('.article-'+label).addClass('article-actif');
         });
 
-        $('.nav-user ul li a').on('click', function() {
+        $('.nav-user ul li a').on('click', function(e) {
+            e.stopPropagation();
             $('.article-user').removeClass('article-actif');
             var label = $(this).text();
 

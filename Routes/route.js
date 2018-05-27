@@ -29,7 +29,7 @@ app.route('/inscription')
         let fil_actu = req.query["fil_actu"]; 
         let hash = bcrypt.hashSync(password);
         bcrypt.compareSync(password, hash);
-        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,password: hash,dateinscription: today, lang: lang});
+        let user = new Users({nom: nom,prenom: prenom,pseudo: pseudo,email: email,verificationemail: false,password: hash,dateinscription: today,lastconnexion: today, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
@@ -55,7 +55,7 @@ app.route('/inscription')
                                 if (error) {
                                     console.log(error);
                                 } else {
-                                    res.status(201).json({ Resultat: "New user is created : " + user.nom + ' ' + user.prenom}); 
+                                    res.status(201).json({ Resultat: "New user is created : " + user.nom + " " + user.prenom+". Please check your mailbox, to active your account."}); 
                                 }
                             }
                         );

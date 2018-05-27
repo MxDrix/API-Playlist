@@ -9,9 +9,11 @@ const Users = new Schema({
 	nom: { type: String },
 	prenom: { type: String },
 	pseudo: { type: String },
-	email: { type: String },
+	email: { type: String, unique: true, lowercase: true  },
+	verificationemail: {type: Boolean, default: false },
 	password: { type: String },
 	dateinscription: {type: Date},
+	lastconnexion:{type: Date},
 	abonnement: [],
 	lang: {type: String},
 	fil_actu: []

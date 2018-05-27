@@ -20,7 +20,7 @@ app.get('/', function (req, res) {
 	res.sendFile(__dirname + '/index.html');
 })
 app.get('*', function(req, res){
-	res.status(400).json({ error: "Error, this route doesn't existe"});
+	res.status(400).json({ error: "This route doesn't existe"});
 });
 // Running the server
 app.listen(port, () => {
