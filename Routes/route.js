@@ -11,10 +11,14 @@ var conn = mongoose.connection;
 var collection = conn.collection('users');
 var collectionOfPlaylists = conn.collection('playlists');
 const app = express.Router();
-var now = new Date();
-var day = ("0" + now.getDate()).slice(-2);
-var month = ("0" + (now.getMonth() + 1)).slice(-2);
-var today = now.getFullYear() + "-" + (month) + "-" + (day);
+var currentdate = new Date(); 
+if(currentdate.getMinutes() < 10){
+    var minute = "0"+ currentdate.getMinutes();
+}else{
+    var minute = currentdate.getMinutes()
+}
+let nodeDate = require('date-and-time');
+let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss a');
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
@@ -98,6 +102,17 @@ app.route('/connexion')
             if(result){
                 if(bcrypt.compareSync(password,result.password)){
                     if(result.verificationemail == true){
+                        collection.findOneAndUpdate({email:result.email}, 
+                            { $set: {  lastconnexion: now } },
+                            {returnOriginal:false}, function(err, doc){
+                            if(err){
+                                console.log("Someting wrong append");
+                            }
+                            if(doc){
+                                console.log("Your mail adresse is validate.");
+                            }
+                        });
+                                
                     var query  = Users.where({email :email});
                     query.findOne(function (err, result) {
                         if (err) return handleError(err);
@@ -127,7 +142,7 @@ app.route('/connexion')
                             for (let i = 0; i <result.fil_actu[0].length; i++) {
                                 let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
                                 cursor.on('data', function(doc) {
-                                    console.log("All doc "+doc.urlToImage);
+                                    // console.log("All doc "+doc.urlToImage);
                                     allResponse.push(doc);
                                 });
                                 cursor.on('close', function() {   
@@ -137,7 +152,7 @@ app.route('/connexion')
                                         //     return a.publishedAt - b.publishedAt;
                                         // });
                                         res.status(200).json({ all: {
-                                            User: {nom: result.nom, prenom: result.prenom, pseudo: result.pseudo,email: result.email,dateinscription: result.dateinscription }, 
+                                            User: {nom: result.nom, prenom: result.prenom, pseudo: result.pseudo,email: result.email,dateinscription: result.dateinscription,lastconnexion: result.lastconnexion }, 
                                             abo: allAbonnements, 
                                             news: allResponse}});
                                     }
