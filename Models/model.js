@@ -12,7 +12,7 @@ const Users = new Schema({
 	pseudo: { type: String },
 	email: { type: String, unique: true, lowercase: true  },
 	verificationemail: {type: Boolean, default: false },
-	password: { type: String},
+	password: { type: String, select: false},
 	dateinscription: {type: Date},
 	lastconnexion:{type: Date},
 	abonnement: [],
