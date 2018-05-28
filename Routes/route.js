@@ -49,7 +49,28 @@ app.route('/inscription')
                         collection.insert(user);
                         let array_of_fil_actu = fil_actu.split(",");
                         let array_of_abonnement = abonnement.split(",") || abonnement;
-
+                        var transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            auth: {
+                                   user: 'mxzerd@gmail.com',
+                                   pass: 'ri18@ecvDigital'
+                               },
+                            tls: {
+                                rejectUnauthorized: false
+                            }
+                           });
+                           const mailOptions = {
+                            from: "sender@email.com", // sender address
+                            to: user.email, // list of receivers
+                            subject: "Inscription API News Informationnelle", // Subject line
+                            html: "<h1>Vérification de votre adresse email</h1><p>Bonjour "+user.nom+" "+user.prenom+",<br> Merci de cliquer sur le lien ci-dessous pour valider votre adresse email</p><a href='https://api-playlist-veille-ecv.herokuapp.com/api/email-verification?tokenuser="+user.tokenuser+"&email="+user.email+"'>Vérification adresse email</a>"// plain text body
+                          };
+                          transporter.sendMail(mailOptions, function (err, info) {
+                            if(err)
+                              console.log(err)
+                            else
+                              console.log(info);
+                         });
                         collection.findOneAndUpdate(
                             { email: user.email }, 
                             { $push: { fil_actu: array_of_fil_actu, abonnement: array_of_abonnement } },
@@ -135,31 +156,30 @@ app.route('/connexion')
     });
 
 const nodemailer = require('nodemailer');
-app.route('/email')
+app.route('/email-verification')
     .get((req, res)=> {
-        
-        var transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                   user: 'mxzerd@gmail.com',
-                   pass: 'ri18@ecvDigital'
-               },
-            tls: {
-                rejectUnauthorized: false
+        let token = req.query["tokenuser"];
+        let email = req.query["email"];
+        var query = Users.where({tokenuser: token,email:email});
+        query.findOne(function (err, result) {
+            if (err) return handleError(err);
+            if (result) {
+                if(result.verificationemail == true){                            
+                    res.status(400).json({ error: "This mail adresse are aready validate !"});
+                }else{
+                    collection.findOneAndUpdate({tokenuser: result.tokenuser, email:result.email}, 
+                        { $set: {  verificationemail: true } },
+                        {returnOriginal:false}, function(err, doc){
+                        if(err){
+                            res.status(400).json({ error: "Someting wrong append"});
+                        }
+                        if(doc){
+                            res.status(200).json({ Resultat: "Your mail adresse is validate."});
+                        }
+                    });
+                }
             }
-           });
-           const mailOptions = {
-            from: 'sender@email.com', // sender address
-            to: 'richard.chandon@gmail.com', // list of receivers
-            subject: 'Subject of your email', // Subject line
-            html: '<p>Your html here</p>'// plain text body
-          };
-          transporter.sendMail(mailOptions, function (err, info) {
-            if(err)
-              console.log(err)
-            else
-              console.log(info);
-         });
+        });
     });
 // Update user by email
 app.route('/update')
