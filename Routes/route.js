@@ -151,7 +151,7 @@ app.route('/connexion')
                 res.status(400).json({ error: "Incorrect email"});
             }
 
-        });
+        }).select("+password");
                
     });
 
@@ -203,7 +203,7 @@ app.route('/update')
             pseudo: pseudo,
             password: hash,
             abonnement: array_of_abonnement,   
-            fil_actu: array_of_fil_actu   
+            fil_actu: array_of_fil_actu
         }}, {returnOriginal: false}, function(err, doc){
             if(err){
                 res.status(200).json({ error: "Something wrong when updating data!"});
