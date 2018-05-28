@@ -12,7 +12,7 @@ var conn = mongoose.connection;
 var collection = conn.collection('users');
 var collectionOfPlaylists = conn.collection('playlists');
 const app = express.Router();
-let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss');
+let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss a');
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
