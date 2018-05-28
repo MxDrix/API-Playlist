@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-
 var conn = mongoose.connection;
 var collection = conn.collection('playlists');
 const Schema = mongoose.Schema; 

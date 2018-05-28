@@ -1,7 +1,7 @@
 var express = require('express'); 
 var mongoose = require('mongoose'); 
 var bodyParser = require('body-parser'); 
-var usersRoute = require('./Routes/route');
+var APIRoutes = require('./Routes/route');
 var helmet = require('helmet');
 const app = express();
 var RateLimit = require('express-rate-limit');
@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
-app.use('/api', usersRoute);
+app.use('/api', APIRoutes);
 
 app.get('/', function (req, res) {
 	res.sendFile(__dirname + '/index.html');
