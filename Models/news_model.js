@@ -11,7 +11,7 @@ const News = new Schema({
 	title: { type: String },
 	description: { type: String },
 	url: { type: String },
-	urlToImage: { type: Date },
+	urlToImage: { type: String },
 	publishedAt: { type: String }
 });
 
