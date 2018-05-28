@@ -381,7 +381,7 @@ app.route('/playlist/update')
         });
     })
 
-// Chercher une playlist à l'aide de l'id_playlist et/ou du nom / pseudo
+// Chercher une playlist à l'aide de l'id_playlist / du nom / pseudo
 app.route('/playlist/search')
     .get((req, res) => {
 

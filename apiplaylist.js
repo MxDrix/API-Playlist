@@ -4,7 +4,20 @@ var bodyParser = require('body-parser');
 var usersRoute = require('./Routes/route');
 var helmet = require('helmet');
 const app = express();
+const rateLimit = require('express-request-limit');
 const port = process.env.PORT || 5656;
+
+const rateLimitOpts = {
+    timeout: 1000 * 60 * 30,
+    exactPath: true,
+    cleanUpInterval: 0,
+    errStatusCode: 429,
+    errMessage: 'Vous avez effectué trop d\'appel sur l\'API.'
+}
+
+app.get('/api/playlist/create', rateLimit(rateLimitOpts), (req, res) => {
+    res.send('Requête refusée !');
+});
 
 const db = mongoose.connect("mongodb://ecvdigital:ecvdigital2018@ds111420.mlab.com:11420/playlistveille");
 
