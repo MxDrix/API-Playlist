@@ -1,6 +1,7 @@
 var express = require('express'); 
 var mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
+let nodeDate = require('date-and-time');
 const randtoken = require('rand-token');
 var Users = require('../Models/model');
 var News = require('../Models/news_model');
@@ -11,10 +12,7 @@ var conn = mongoose.connection;
 var collection = conn.collection('users');
 var collectionOfPlaylists = conn.collection('playlists');
 const app = express.Router();
-var now = new Date();
-var day = ("0" + now.getDate()).slice(-2);
-var month = ("0" + (now.getMonth() + 1)).slice(-2);
-var today = now.getFullYear() + "-" + (month) + "-" + (day);
+let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss');
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
@@ -30,8 +28,8 @@ app.route('/inscription')
         let fil_actu = req.query["fil_actu"]; 
         var token = randtoken.generate(16);
         let hash = bcrypt.hashSync(password);
-        bcrypt.compareSync(password, hash);
-        let user = new Users({tokenuser: token,nom: nom,prenom: prenom,pseudo: pseudo,email: email,verificationemail: false,password: hash,dateinscription: today,lastconnexion: today, lang: lang});
+        // bcrypt.compareSync(password, hash);
+        let user = new Users({tokenuser: token,nom: nom,prenom: prenom,pseudo: pseudo,email: email,verificationemail: false,password: hash,dateinscription: now,lastconnexion: now, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
@@ -97,6 +95,18 @@ app.route('/connexion')
         queryEmail.findOne(function (err, result) {
             if(result){
                 if(bcrypt.compareSync(password,result.password)){
+                    if(result.verificationemail == true){
+                        collection.findOneAndUpdate({email:result.email}, 
+                            { $set: {  lastconnexion: now } },
+                            {returnOriginal:false}, function(err, doc){
+                            if(err){
+                                console.log("Someting wrong append");
+                            }
+                            if(doc){
+                                console.log("Your mail adresse is validate.");
+                            }
+                        });
+                                
                     var query  = Users.where({email :email});
                     query.findOne(function (err, result) {
                         if (err) return handleError(err);
@@ -126,16 +136,17 @@ app.route('/connexion')
                             for (let i = 0; i <result.fil_actu[0].length; i++) {
                                 let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
                                 cursor.on('data', function(doc) {
+                                    // console.log("All doc "+doc.urlToImage);
                                     allResponse.push(doc);
                                 });
                                 cursor.on('close', function() {   
                                     if(i == result.fil_actu[0].length - 1){
-                                        allResponse.sort();
-                                        allResponse.sort(function(a, b){
-                                            return a.publishedAt - b.publishedAt;
-                                        });
+                                        // allResponse.sort();
+                                        // allResponse.sort(function(a, b){
+                                        //     return a.publishedAt - b.publishedAt;
+                                        // });
                                         res.status(200).json({ all: {
-                                            User: {nom: result.nom, prenom: result.prenom, pseudo: result.pseudo,email: result.email,dateinscription: result.dateinscription }, 
+                                            User: {nom: result.nom, prenom: result.prenom, pseudo: result.pseudo,email: result.email,lastconnexion: result.lastconnexion ,dateinscription: result.dateinscription }, 
                                             abo: allAbonnements, 
                                             news: allResponse}});
                                     }
@@ -145,6 +156,9 @@ app.route('/connexion')
                         }
                     }); 
                 }else{
+                    res.status(400).json({error: "Please validate your email."});
+                }
+            }else{
                     res.status(400).json({ error: "Incorrect password"});
                 }
             }else{
