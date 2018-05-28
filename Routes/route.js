@@ -210,14 +210,20 @@ app.route('/update')
         let password = req.query["password"];  
         let email = req.query["email"];
         let abonnement = req.query["abonnement"];  
+        let fil_actu = req.query["fil_actu"];  
         let hash = bcrypt.hashSync(password);
         var query = { email: email};
-        collection.findOneAndUpdate(query, { $set: {  
+
+        let array_of_abonnement = abonnement.split(",") || abonnement;
+        let array_of_fil_actu = fil_actu.split(",") || fil_actu;
+
+        collection.findOneAndUpdate(query, { $set: {
             nom: nom,
             prenom: prenom,
             pseudo: pseudo,
             password: hash,
-            abonnement: abonnement   
+            abonnement: array_of_abonnement,   
+            fil_actu: array_of_fil_actu   
         }}, {returnOriginal: false}, function(err, doc){
             if(err){
                 res.status(200).json({ error: "Something wrong when updating data!"});
@@ -269,9 +275,9 @@ app.route('/user')
             cursorFirstName.on('close', function() {
                 if (arrayOfUsers.length > 0) {
                     res.status(200).json({ arrayOfUsers });
-                } else { 
+                } else {
                     // On vérifie si un pseudo correspond au pseudo saisi
-                    query  = Users.where({pseudo : user});
+                    query = Users.where({pseudo : user});
                     query.findOne(function (err, result) {
                         if (err) return handleError(err);
                         if (result) {
@@ -288,7 +294,7 @@ app.route('/user')
                                 }
                             })
                         }
-                    })
+                    });
                  }
             });
         }
