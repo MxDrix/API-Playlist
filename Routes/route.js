@@ -29,7 +29,7 @@ app.route('/inscription')
         var token = randtoken.generate(16);
         let hash = bcrypt.hashSync(password);
         // bcrypt.compareSync(password, hash);
-        let user = new Users({tokenuser: token,nom: nom,prenom: prenom,pseudo: pseudo,email: email,verificationemail: false,password: hash,dateinscription: now,lastconnexion: nowhero, lang: lang});
+        let user = new Users({tokenuser: token,nom: nom,prenom: prenom,pseudo: pseudo,email: email,verificationemail: false,password: hash,dateinscription: now,lastconnexion: now, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
