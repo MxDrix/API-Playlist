@@ -12,7 +12,7 @@ var conn = mongoose.connection;
 var collection = conn.collection('users');
 var collectionOfPlaylists = conn.collection('playlists');
 const app = express.Router();
-let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss a');
+let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss');
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
@@ -146,7 +146,7 @@ app.route('/connexion')
                                         //     return a.publishedAt - b.publishedAt;
                                         // });
                                         res.status(200).json({ all: {
-                                            User: {nom: result.nom, prenom: result.prenom, pseudo: result.pseudo,email: result.email,dateinscription: result.dateinscription,lastconnexion: result.lastconnexion }, 
+                                            User: {nom: result.nom, prenom: result.prenom, pseudo: result.pseudo,email: result.email,lastconnexion: result.lastconnexion ,dateinscription: result.dateinscription }, 
                                             abo: allAbonnements, 
                                             news: allResponse}});
                                     }
