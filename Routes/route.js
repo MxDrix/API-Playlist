@@ -18,7 +18,7 @@ if(currentdate.getMinutes() < 10){
     var minute = currentdate.getMinutes()
 }
 let nodeDate = require('date-and-time');
-let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss a');
+let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss');
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
 // email unique / pseudo
