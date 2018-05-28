@@ -45,8 +45,8 @@ app.route('/inscription')
                         var transporter = nodemailer.createTransport({
                             service: 'gmail',
                             auth: {
-                                   user: 'mxzerd@gmail.com',
-                                   pass: 'ri18@ecvDigital'
+                                   user: 'apiplaylist.news@gmail.com',
+                                   pass: 'ecvdigital2018'
                                },
                             tls: {
                                 rejectUnauthorized: false
