@@ -1,6 +1,7 @@
 var express = require('express'); 
 var mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
+let nodeDate = require('date-and-time');
 const randtoken = require('rand-token');
 var Users = require('../Models/model');
 var News = require('../Models/news_model');
@@ -11,13 +12,6 @@ var conn = mongoose.connection;
 var collection = conn.collection('users');
 var collectionOfPlaylists = conn.collection('playlists');
 const app = express.Router();
-var currentdate = new Date(); 
-if(currentdate.getMinutes() < 10){
-    var minute = "0"+ currentdate.getMinutes();
-}else{
-    var minute = currentdate.getMinutes()
-}
-let nodeDate = require('date-and-time');
 let now = nodeDate.format(new Date(), 'DD-MMMM-YYYY, hh:mm:ss');
 
 // Inscription with nom - prenom - pseudo - email - password - abonnement
@@ -35,7 +29,7 @@ app.route('/inscription')
         var token = randtoken.generate(16);
         let hash = bcrypt.hashSync(password);
         bcrypt.compareSync(password, hash);
-        let user = new Users({tokenuser: token,nom: nom,prenom: prenom,pseudo: pseudo,email: email,verificationemail: false,password: hash,dateinscription: today,lastconnexion: today, lang: lang});
+        let user = new Users({tokenuser: token,nom: nom,prenom: prenom,pseudo: pseudo,email: email,verificationemail: false,password: hash,dateinscription: now,lastconnexion: nowhero, lang: lang});
         // user.save();
         var query  = Users.where({email :email});
         query.findOne(function (err, result) {
