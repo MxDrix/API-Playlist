@@ -97,6 +97,7 @@ app.route('/connexion')
         queryEmail.findOne(function (err, result) {
             if(result){
                 if(bcrypt.compareSync(password,result.password)){
+                    if(result.verificationemail == true){
                     var query  = Users.where({email :email});
                     query.findOne(function (err, result) {
                         if (err) return handleError(err);
@@ -126,14 +127,15 @@ app.route('/connexion')
                             for (let i = 0; i <result.fil_actu[0].length; i++) {
                                 let cursor = News.find({ category: result.fil_actu[0][i]}).cursor();
                                 cursor.on('data', function(doc) {
+                                    console.log("All doc "+doc.urlToImage);
                                     allResponse.push(doc);
                                 });
                                 cursor.on('close', function() {   
                                     if(i == result.fil_actu[0].length - 1){
-                                        allResponse.sort();
-                                        allResponse.sort(function(a, b){
-                                            return a.publishedAt - b.publishedAt;
-                                        });
+                                        // allResponse.sort();
+                                        // allResponse.sort(function(a, b){
+                                        //     return a.publishedAt - b.publishedAt;
+                                        // });
                                         res.status(200).json({ all: {
                                             User: {nom: result.nom, prenom: result.prenom, pseudo: result.pseudo,email: result.email,dateinscription: result.dateinscription }, 
                                             abo: allAbonnements, 
@@ -145,6 +147,9 @@ app.route('/connexion')
                         }
                     }); 
                 }else{
+                    res.status(400).json({error: "Please validate your email."});
+                }
+            }else{
                     res.status(400).json({ error: "Incorrect password"});
                 }
             }else{
