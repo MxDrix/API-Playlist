@@ -26,6 +26,9 @@ var limiter = new RateLimit({
 
 app.use(helmet());
 app.disable('x-powered-by');
+app.use(cacheControl({
+  noCache: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
