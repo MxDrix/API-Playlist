@@ -7,7 +7,10 @@ const app = express();
 var RateLimit = require('express-rate-limit');
 const port = process.env.PORT || 5656;
 
-const db = mongoose.connect("mongodb://ecvdigital:ecvdigital2018@ds111420.mlab.com:11420/playlistveille");
+// Connecting to mongodb database
+var dbuser = 'ecvdigital';
+var dbpassword = 'ecvdigital2018';
+const db = mongoose.connect("mongodb://" + dbuser + ":" + dbpassword + "@ds111420.mlab.com:11420/playlistveille");
 
 // Bloque le nombre de requêtes max sur toutes les routes
 app.enable('trust proxy');

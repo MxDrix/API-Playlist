@@ -98,7 +98,7 @@ app.route('/connexion')
                             { $set: { lastconnexion: now } },
                             { returnOriginal:false }, function(err, doc){
                                 if(err){
-                                    console.log("Someting wrong append");
+                                    console.log("Someting wrong append in connexion");
                                 }
                                 if(doc){
                                     console.log("Your mail adresse is validate.");
