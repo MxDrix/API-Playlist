@@ -29,7 +29,7 @@ var limiter = new RateLimit({
 	handler: function (req, res, /*next*/) {
 		res.format({
 		  json: function(){
-			res.status(429).json({ message: "Vous avez effectué trop de requêtes sur l\'API ! Veuillez réessayez plus tard." });
+			res.status(429).json({ error: "Vous avez effectué trop de requêtes sur l\'API ! Veuillez réessayez plus tard." });
 		  }
 		});
 	}
