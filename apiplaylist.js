@@ -22,7 +22,7 @@ var limiter = new RateLimit({
 	message: "Vous avez effectué trop de requêtes sur l\'API. Veuillez réessayez plus tard."
 });
 
-app.use(limiter);
+// app.use(limiter);
 
 app.use(helmet());
 app.disable('x-powered-by');
