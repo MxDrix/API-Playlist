@@ -93,7 +93,7 @@ app.route('/connexion')
         queryEmail.findOne(function (err, result) {
             if(result){
                 if(bcrypt.compareSync(password,result.password)){
-                    if(result.verificationemail == true){
+                    if(true){
                         collectionOfUsers.findOneAndUpdate({ email:result.email },
                             { $set: { lastconnexion: now } },
                             { returnOriginal:false }, function(err, doc){
