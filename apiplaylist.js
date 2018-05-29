@@ -24,16 +24,22 @@ app.enable('trust proxy');
 
 var limiter = new RateLimit({
 	windowMs: 15*60*1000, // 15 minutes
-	max: 20, // limit each IP to 100 requests per windowMs
+	max: 20, // limit each IP to 20 requests per windowMs
 	delayMs: 0, // disable delaying - full speed until the max limit is reached
-	message: "Vous avez effectué trop de requêtes sur l\'API. Veuillez réessayez plus tard."
+	handler: function (req, res, /*next*/) {
+		res.format({
+		  json: function(){
+			res.status(429).json({ message: "Vous avez effectué trop de requêtes sur l\'API ! Veuillez réessayez plus tard." });
+		  }
+		});
+	}
 });
 
-// app.use(limiter);
+app.use(limiter);
 
 app.use(helmet());
 app.disable('x-powered-by');
-app.use(bodyParser.json({error:limiter}));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
