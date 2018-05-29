@@ -29,11 +29,11 @@ var limiter = new RateLimit({
 	message: "Vous avez effectué trop de requêtes sur l\'API. Veuillez réessayez plus tard."
 });
 
-app.use(limiter);
+// app.use(limiter);
 
 app.use(helmet());
 app.disable('x-powered-by');
-app.use(bodyParser.json());
+app.use(bodyParser.json({error:limiter}));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
