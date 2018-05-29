@@ -12,6 +12,13 @@ var dbuser = 'ecvdigital';
 var dbpassword = 'ecvdigital2018';
 const db = mongoose.connect("mongodb://" + dbuser + ":" + dbpassword + "@ds111420.mlab.com:11420/playlistveille");
 
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.setHeader('Cache-Control', 'public, no-cache');
+	next();
+  });
+
 // Bloque le nombre de requêtes max sur toutes les routes
 // app.enable('trust proxy');
 
@@ -26,9 +33,6 @@ const db = mongoose.connect("mongodb://" + dbuser + ":" + dbpassword + "@ds11142
 
 app.use(helmet());
 app.disable('x-powered-by');
-app.use(cacheControl({
-  noCache: true
-}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
