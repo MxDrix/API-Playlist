@@ -20,16 +20,16 @@ app.use(function(req, res, next) {
   });
 
 // Bloque le nombre de requêtes max sur toutes les routes
-// app.enable('trust proxy');
+app.enable('trust proxy');
 
-/* var limiter = new RateLimit({
+var limiter = new RateLimit({
 	windowMs: 15*60*1000, // 15 minutes
 	max: 20, // limit each IP to 100 requests per windowMs
 	delayMs: 0, // disable delaying - full speed until the max limit is reached
 	message: "Vous avez effectué trop de requêtes sur l\'API. Veuillez réessayez plus tard."
-}); */
+});
 
-// app.use(limiter);
+app.use(limiter);
 
 app.use(helmet());
 app.disable('x-powered-by');
